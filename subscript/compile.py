@@ -8,6 +8,7 @@ import subscript.script as script
 import subscript.langtypes as langtypes
 import subscript.functions as functions
 import subscript.errors as errors
+import runpy
 
 # TODO: Custom exceptions
 # TODO: Inject constants
@@ -120,27 +121,42 @@ class Compile(object):
                         base, ext = os.path.splitext(file)
 
                         if base != target:
-                            # Don't both, the file doesn't match the import
+                            # Don't bother, the file doesn't match the import
                             continue
 
+                        # FIXME: All extensions
                         if ext in ['.py', '.pyc']:
-                            # We should import the file
-                            break
+                            # Python module. These will register custom functions
+                            runpy.run_path(absolute, init_globals={'register': functions.register})
+                            return
                         elif ext in ['.sub']:
-                            # Compile this file first
-                            break
+                            # TODO: Compile this file first
+                            raise ImportError('Script import not yet supported.')
+                            return
                         elif ext in ['.asm', '.s']:
-                            # Assemble
-                            break
+                            # TODO: Assemble
+                            raise ImportError('Assembly import not yet supported.')
+                            return
+                        elif ext in ['.c']:
+                            # TODO: Compile C code
+                            raise ImportError('C import not yet supported.')
+                            return
                         elif ext in ['.bin', '.raw']:
                             # Raw copy
                             self.symbols[asname] = langtypes.RawFile(self.script, absolute)
+                            return
                         elif ext in ['.json']:
-                            # Definitions?
-                            break
+                            # TODO: Definitions?
+                            raise ImportError('Definition import not yet supported.')
+                            return
                         elif ext in ['.rbt']:
-                            # Definitions?
-                            break
+                            # TODO: Definitions?
+                            raise ImportError('Definition import not yet supported.')
+                            return
+            else:
+                # Import not found
+                # TODO: Create special import exception
+                raise ImportError('Import of "{}" unresolved.'.format(name.name))
 
     def _handle_import_from(self, node):
         # TODO
@@ -623,32 +639,6 @@ if __name__ == '__main__':
     with open('tables/text.json') as table:
         table = json.loads(table.read())
     decode = [k for k, v in sorted(table['normal'].items())]
-
-#     with open('test.gba', 'rb') as rom:
-#         # Pokemon names table
-#         rom.seek(0x245EE0)
-#         for i in range(412):
-#             data = rom.read(0xB)
-#             pokemon_table.append(pdecode(data).strip().lower())
-#
-#         # Item names table
-#         rom.seek(0x3DB028)
-#         for i in range(0x177):
-#             data = rom.read(0x2C)
-#             items_table.append(pdecode(data).strip().lower())
-#
-#         # Attack names table
-#         rom.seek(0x247094)
-#         for i in range(0x163):
-#             data = rom.read(0xD)
-#             attacks_table.append(pdecode(data).strip().lower())
-#
-#     query = 'Oran berry'
-#     print(items_table.index(query.lower()))
-#
-#
-#     sys.exit(0)
-
 
     with open('test.sub') as file:
         try:

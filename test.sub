@@ -3,6 +3,8 @@ k = Var(0x8000)
 p = Pokemon('Charmander')
 catch = "Are you taking good care\nof Charmander?"
 
+warning('sdsdsd')
+
 def function():
     fanfare(0x13E)
     fanfare(0x13E)
