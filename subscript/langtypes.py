@@ -87,18 +87,21 @@ class Movement(SectionType):
             raise TypeError
 
         out = bytearray()
+        debug = []
         for move in self._value:
             if type(move) == ast.Str:
                 out.append(self.__class__.table[move.s])
+                debug.append(move.s)
             elif type(move) == ast.Num:
                 out.append(move.n)
+                debug.append(move.n)
             else:
                 raise errors.CompileSyntaxError(move)
 
         # Sentinel
         if out[-1] != 0xFE:
             out.append(0xFE)
-        return subscript.script.SectionRaw(self.parent, bytes(out))
+        return subscript.script.SectionRaw(self.parent, bytes(out), debug=debug)
 
 class String(SectionType):
     '''
@@ -113,7 +116,7 @@ class String(SectionType):
         p = textparse.PoketextParser()
         p.feed(value)
         data = p.output
-        return subscript.script.SectionRaw(self.parent, data)
+        return subscript.script.SectionRaw(self.parent, data, debug=repr(self._value))
 
 class Raw(SectionType):
     '''
