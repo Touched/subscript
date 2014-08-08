@@ -3,6 +3,8 @@ import subscript.datatypes
 import subscript.textparse as textparse
 import subscript.codec
 import ast
+from subscript import errors
+import json
 
 class TypeRegistry(type):
     '''
@@ -74,10 +76,29 @@ class Movement(SectionType):
     For applymovement style commands.
     '''
 
+    table = None
+
     def section(self):
-        # Parse movement data here from the self.value property
-        data = b'\xFE'
-        return subscript.script.SectionRaw(self.parent, data)
+        if self.__class__.table == None:
+            with open('tables/movements.json') as file:
+                self.__class__.table = json.load(file)
+
+        if type(self._value) != list:
+            raise TypeError
+
+        out = bytearray()
+        for move in self._value:
+            if type(move) == ast.Str:
+                out.append(self.__class__.table[move.s])
+            elif type(move) == ast.Num:
+                out.append(move.n)
+            else:
+                raise errors.CompileSyntaxError(move)
+
+        # Sentinel
+        if out[-1] != 0xFE:
+            out.append(0xFE)
+        return subscript.script.SectionRaw(self.parent, bytes(out))
 
 class String(SectionType):
     '''
@@ -100,9 +121,9 @@ class Raw(SectionType):
     '''
 
     def section(self):
-        if type(self.value) != bytes:
+        if type(self._value) != bytes:
             raise TypeError
-        return subscript.script.SectionRaw(self.parent, self.value)
+        return subscript.script.SectionRaw(self.parent, self._value)
 
 class Flag(Type):
     '''
