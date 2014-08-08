@@ -134,15 +134,31 @@ def callstd(func):
     return ('callstd', func)
 
 @functions.register
-def pauseevent(a):
-    return ('pause', a)
+def pause(time):
+    '''
+    Blocks script execution for ``time``.
+
+    :param time: The number of frame to wait
+    '''
+    return ('pause', time)
 
 @functions.register
-def disappear(b):
-    return ('hidesprite', b)
+def disappear(sprite):
+    '''
+    Hides the overworld with ID ``sprite``
+
+    :param sprite: The ID of the overworld to hide.
+    '''
+
+    return ('hidesprite', sprite)
 
 @functions.register
 def release(doall=False):
+    '''
+    Reverses the effects of :func:`lock`.
+
+    :param doall: Reverse the effects of :command:`lockall` or :command:`lock`.
+    '''
     if doall:
         return ('releaseall',)
     else:
@@ -150,11 +166,24 @@ def release(doall=False):
 
 @functions.register
 def additem(item, quantity=1):
+    '''
+    Silently add an item to the player's bag.
+
+    :param item: The item to add.
+    :param quanity: How many copies of `item` to give. Defaults to ``1``
+    '''
     return ('additem', item, quantity)
 
 @functions.register
 def giveitem(item, quantity=1, fanfare=0):
-    # The generic giveitem
+    '''
+    Gives the player an item, adding to to their bag while displaying a message
+    and playing an optional sound.
+
+    :param item: The item to add.
+    :param quanity: How many copies of `item` to give. Defaults to ``1``.
+    :param fanfare: The sound to play.
+    '''
     out = []
     out.append(('copyvarifnotzero', 0x8000, item))
     out.append(('copyvarifnotzero', 0x8001, quantity))
@@ -167,6 +196,9 @@ def giveitem(item, quantity=1, fanfare=0):
 
 @functions.register
 def givedecoration(decoration):
+    '''
+    :command:`nop` in FireRed
+    '''
     out = []
     out.append(('copyvarifnotzero', 0x8000, decoration))
     out.append(('callstd', 7))
@@ -174,7 +206,14 @@ def givedecoration(decoration):
 
 @functions.register
 def finditem(item, quantity=1):
-    # A Pokeball find item
+    '''
+    Gives the player an item, adding to to their bag while displaying a message
+    saying that they found the item.
+
+    :param item: The item to add.
+    :param quanity: How many copies of `item` to give. Defaults to ``1``.
+    '''
+
     out = []
     out.append(('copyvarifnotzero', 0x8000, item))
     out.append(('copyvarifnotzero', 0x8001, quantity))
@@ -182,7 +221,15 @@ def finditem(item, quantity=1):
     return out
 
 @functions.register
-def battle(species, level=70, helditem=0):
-    return [('setwildbattle', species, level, helditem), ('dowildbattle',)]
+def battle(species, level=70, item=0):
+    '''
+    Triggers a prefined wild Pokemon battle. Blocks until the battle finishes.
+
+    :param species: The Pokemon to battle
+    :param level: The level of the wild Pokemon. Defaults to 70 (Legendary)
+    :param item: The item that the wild Pokemon holds.
+    '''
+
+    return [('setwildbattle', species, level, item), ('dowildbattle',)]
 
 
