@@ -1,0 +1,44 @@
+given = Flag(0x828)
+k = Var(0x8000)
+p = Pokemon('Charmander')
+catch = "Are you taking good care\nof Charmander?"
+
+def function():
+    fanfare(0x13E)
+    fanfare(0x13E)
+    fanfare(0x13E)
+    fanfare(0x13E)
+    if k == 2:
+        return 2
+    else:
+        return 3
+
+if given:
+    message(catch)
+    message(catch)
+    release()
+    function()
+    exit
+
+question("Hello.\nSorry to trouble you.\nI can't take care\nof my Charmander.\pCan you take care of\nit for me?")
+if LASTRESULT > 0 or LASTRESULT < 5:
+    givepokemon(p, item=Item('Oran Berry'))
+    fanfare(0x13E)
+    message("{black}You received a Charmander!", True)
+    waitfanfare()
+    closeonkeypress()
+    given = True
+    question("{black}Would you like to give a\nnickname to Charmander?")
+    if LASTRESULT:
+        call(0x1A74EB)
+    message("Please take care of\nCharmander.")
+else:
+    message("That's okay.\pI'm sure someone else will\ntake it.")
+
+i = Var(0x4011)
+while i < 4:
+    message('Hey')
+    i += 1 + 1
+
+release()
+exit

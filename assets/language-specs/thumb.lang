@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This program is free software. It comes without any warranty, to
+     the extent permitted by applicable law. You can redistribute it
+     and/or modify it under the terms of the Do What The Fuck You Want
+     To Public License, Version 2, as published by Sam Hocevar. See
+     http://www.wtfpl.net/ for more details. -->
+<!DOCTYPE language SYSTEM "language.dtd">
+<language id="asm" _name="asm" version="2.0" _section="Sources">
+    <metadata>
+        <property name="mimetypes">text/x-arm-asm</property>
+        <property name="globs">*.s</property>
+    </metadata>
+
+    <styles>
+        <style id="comment" _name="Comment" map-to="def:comment"/>
+        <style id="string" _name="String" map-to="def:string"/>
+        <style id="escaped-character" _name="Escaped Character" map-to="def:special-char"/>
+        <style id="preprocessor" _name="Preprocessor" map-to="def:preprocessor"/>
+        <style id="included-file" _name="Included File" map-to="def:string"/>
+        <style id="char" _name="Character" map-to="def:character"/>
+        <style id="keyword" _name="Keyword" map-to="def:keyword"/>
+        <style id="type" _name="Directive" map-to="def:type"/>
+        <style id="number" _name="number" map-to="def:base-n-integer"/>
+        <style id="function" _name="Function" map-to="def:function"/>
+    </styles>
+
+        <default-regex-options case-sensitive="false"/>
+
+    <definitions>
+        <context id="asm">
+            <include>
+
+                <context id="comment" style-ref="comment">
+                    <start>@</start>
+                    <end>$</end>
+                </context>
+
+                <context id="string" end-at-line-end="true" style-ref="string">
+                    <start>"</start>
+                    <end>"</end>
+                    <include>
+                        <context id="escape" style-ref="escaped-character">
+                            <match>\\.</match>
+                        </context>
+                    </include>
+                </context>
+
+                <context id="comment-multiline" style-ref="comment">
+                    <start>\/\*</start>
+                    <end>\*\/</end>
+                </context>
+
+                <context id="operators" style-ref="keyword">
+                    <suffix>(ne|cs|hs|cc|lo|mi|pl|vs|vc|hi|ls|ge|lt|gt|le|al|s)?</suffix>
+                    <keyword>and</keyword>
+                    <keyword>eor</keyword>
+                    <keyword>orr</keyword>
+                    <keyword>bic</keyword>
+                </context>
+
+                <context id="keywords" style-ref="keyword">
+                            <suffix>(ne|cs|hs|cc|lo|mi|pl|vs|vc|hi|ls|ge|lt|gt|le|al)?</suffix>
+                    <keyword>stmfd</keyword>
+                    <keyword>ldmfd</keyword>
+                    <keyword>stmfa</keyword>
+                    <keyword>ldmfa</keyword>
+                    <keyword>stmed</keyword>
+                    <keyword>ldmed</keyword>
+                    <keyword>stmea</keyword>
+                    <keyword>ldmea</keyword>
+                    <keyword>stmia</keyword>
+                    <keyword>ldmia</keyword>
+                    <keyword>stmib</keyword>
+                    <keyword>ldmib</keyword>
+                    <keyword>stmda</keyword>
+                    <keyword>ldmda</keyword>
+                    <keyword>stmdb</keyword>
+                    <keyword>ldmdb</keyword>
+                    <keyword>add</keyword>
+                    <keyword>adc</keyword>
+                    <keyword>sub</keyword>
+                    <keyword>sbc</keyword>
+                    <keyword>rsb</keyword>
+                    <keyword>rsc</keyword>
+                    <keyword>cmp</keyword>
+                    <keyword>cmpn</keyword>
+                    <keyword>tst</keyword>
+                    <keyword>teq</keyword>
+                    <keyword>mov</keyword>
+                    <keyword>mvn</keyword>
+                    <keyword>neg</keyword>
+                    <keyword>lsl</keyword>
+                    <keyword>lsr</keyword>
+                    <keyword>asr</keyword>
+                    <keyword>ror</keyword>
+                    <keyword>rrx</keyword>
+                    <keyword>mul</keyword>
+                    <keyword>mla</keyword>
+                    <keyword>ldrb</keyword>
+                    <keyword>strb</keyword>
+                    <keyword>ldrh</keyword>
+                    <keyword>strh</keyword>
+                    <keyword>ldrsb</keyword>
+                    <keyword>ldrsh</keyword>
+                    <keyword>ldr</keyword>
+                    <keyword>str</keyword>
+                    <keyword>ldm</keyword>
+                    <keyword>stm</keyword>
+                    <keyword>push</keyword>
+                    <keyword>pop</keyword>
+                    <keyword>swp</keyword>
+                    <keyword>swi</keyword>
+                    <keyword>psr</keyword>
+                    <keyword>mrs</keyword>
+                    <keyword>msr</keyword>
+                    <keyword>cdp</keyword>
+                    <keyword>mrc</keyword>
+                    <keyword>mcr</keyword>
+                    <keyword>ldc</keyword>
+                    <keyword>stc</keyword>
+                    <keyword>ble</keyword>
+                    <keyword>bls</keyword>
+                    <keyword>bl</keyword>
+                    <keyword>bx</keyword>
+                    <keyword>b</keyword>
+                </context>
+
+                <context id="preprocessor" style-ref="preprocessor">
+                    <prefix>^#</prefix>
+                    <keyword>if</keyword>
+                        <keyword>ifdef</keyword>
+                        <keyword>ifndef</keyword>
+                        <keyword>else</keyword>
+                        <keyword>elif</keyword>
+                        <keyword>define</keyword>
+                        <keyword>endif</keyword>
+                        <keyword>undef</keyword>
+                        <keyword>error</keyword>
+                        <keyword>pragma</keyword>
+                        <keyword>line</keyword>
+                    </context>
+
+                    <context id="registers" style-ref="preprocessor">
+                        <keyword>r[0-9]+</keyword>
+                        <keyword>lr</keyword>
+                        <keyword>pc</keyword>
+                        <keyword>sp</keyword>
+                        <keyword>cpsr</keyword>
+                        <keyword>spsr[0-4]</keyword>
+                    </context>
+
+                    <context id="directives" style-ref="type">
+                        <prefix>\.?</prefix>
+                        <keyword>alias</keyword>
+                        <keyword>req</keyword>
+                        <keyword>unreq</keyword>
+                        <keyword>align</keyword>
+                        <keyword>int</keyword>
+                        <keyword>word</keyword>
+                        <keyword>short</keyword>
+                        <keyword>long</keyword>
+                        <keyword>section</keyword>
+                        <keyword>arm</keyword>
+                        <keyword>code32</keyword>
+                        <keyword>area</keyword>
+                        <keyword>assert</keyword>
+                        <keyword>attr</keyword>
+                        <keyword>cn</keyword>
+                        <keyword>code16</keyword>
+                        <keyword>common</keyword>
+                        <keyword>cp</keyword>
+                        <keyword>data</keyword>
+                        <keyword>dcb</keyword>
+                        <keyword>dcd</keyword>
+                        <keyword>dcdu</keyword>
+                        <keyword>dcdo</keyword>
+                        <keyword>dcfd</keyword>
+                        <keyword>dcfdu</keyword>
+                        <keyword>dcfs</keyword>
+                        <keyword>dcfsu</keyword>
+                        <keyword>dci</keyword>
+                        <keyword>dcq</keyword>
+                        <keyword>dcqu</keyword>
+                        <keyword>globl</keyword>
+                        <keyword>global</keyword>
+                        <keyword>thumb</keyword>
+                        <keyword>thumb_func</keyword>
+                        <keyword>text</keyword>
+                        <keyword>include</keyword>
+                        <keyword>equ</keyword>
+                        <keyword>ltorg</keyword>
+                    </context>
+
+                    <context id="hexadecimal" style-ref="number">
+                        <match extended="true">([#?]|[=?])? 0x[a-f0-9]+</match>
+                    </context>
+
+                    <context id="binary" style-ref="number">
+                        <match extended="true">([#?]|[=?])? 0b[0-1]+</match>
+                    </context>
+
+                    <context id="integer" style-ref="number">
+                        <match extended="true">([#?]|[=?])? [0-9]+</match>
+                    </context>
+
+                    <context id="label" style-ref="function">
+                        <match>.*:</match>
+                    </context>
+
+            </include>
+        </context>
+    </definitions>
+</language>
