@@ -10,6 +10,7 @@ import subscript.errors as errors
 import subscript.functions as functions
 import subscript.langtypes as langtypes
 import subscript.script as script
+from subscript import registry
 
 class Compile(object):
     '''
@@ -26,6 +27,8 @@ class Compile(object):
 
         # Use None so that we base line numbers from 1 instead of 0
         self.lines = [None] + self.source.split('\n')
+
+        self.modules = {}
 
         # State variables
         self.script = script.Script(base)
@@ -132,7 +135,8 @@ class Compile(object):
                         # FIXME: All extensions
                         if ext in ['.py', '.pyc']:
                             # Python module. These will register custom functions
-                            runpy.run_path(absolute, init_globals={'register': functions.register})
+                            self.modules[asname] = registry.Registry(target)
+                            runpy.run_path(absolute, init_globals={'register': self.modules[asname].register})
                             return
                         elif ext in ['.sub']:
                             # TODO: Compile this file first
@@ -379,6 +383,7 @@ class Compile(object):
 
         if type(node.func) == ast.Name:
             call = node.func.id
+            registry = functions.functions
 
             # If the name is in the symbol table, we have a user-defined function
             if call in self.symbols:
@@ -387,10 +392,8 @@ class Compile(object):
                 # We don't want to handle the next case
                 return
         elif type(node.func) == ast.Attribute:
-            print(node.func.__dict__)
-            print(node.func.ctx.__dict__)
-            print(node.func.value.__dict__)
-            return
+            call = node.func.attr
+            registry = self.modules[node.func.value.id]
 
         # Otherwise, we have a built-in function
         args = []
@@ -402,10 +405,10 @@ class Compile(object):
             key, value = keyword.arg, self._handle_function_arg(keyword.value)
             kwargs[key] = value
 
-        if call not in functions.functions:
+        if call not in registry:
             raise errors.CompileNameError(call)
 
-        cmd = functions.functions[call](*args, **kwargs)
+        cmd = registry[call](*args, **kwargs)
         self.section.append(cmd)
 
     def _handle_function_arg(self, node):
