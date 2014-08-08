@@ -10,9 +10,6 @@ import subscript.functions as functions
 import subscript.errors as errors
 import runpy
 
-# TODO: Custom exceptions
-# TODO: Inject constants
-
 class Compile(object):
     '''
     '''
@@ -31,7 +28,11 @@ class Compile(object):
 
         # State variables
         self.script = script.Script(base)
-        self.symbols = {'LASTRESULT': langtypes.Var(self.script, 0x800D)}
+        self.symbols = {
+                        'PLAYERFACING': langtypes.Var(self.script, 0x800C),
+                        'LASTRESULT': langtypes.Var(self.script, 0x800D),
+                        'LASTTALKED': langtypes.Var(self.script, 0x800F)
+                        }
 
         self.nextsection = None
         self.section = self.script.add()
