@@ -138,9 +138,4 @@ def finditem(item, quantity=1):
 def battle(species, level=70, helditem=0):
     return ('setwildbattle', species, level, helditem, 'dowildbattle')
 
-@register
-def battle2(species, level=70, helditem=0, stye=0):
-    # This needs a better name. Also, I think this is FR only?
-    return ('setwildbattle', species, level, helditem, 'special', 0x13B, 'waitstate')
-    
-    
+
