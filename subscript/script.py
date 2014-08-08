@@ -62,7 +62,7 @@ class Section(object):
                 self.append(item)
         else:
             try:
-                self._size += command.size
+                self._size += len(command)
             except AttributeError:
                 raise TypeError
             self.commands.append(command)
@@ -80,6 +80,9 @@ class Section(object):
     @property
     def size(self):
         return self._size
+
+    def __len__(self):
+        return self.size
 
     def dynamic(self, offset=0):
         if offset:
@@ -147,6 +150,9 @@ class Command(object):
     @property
     def size(self):
         return self._size
+
+    def __len__(self):
+        return self.size
 
     @classmethod
     def decompile(cls, data):
