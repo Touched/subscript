@@ -1,5 +1,6 @@
 """
-Builtin function
+These functions are imported into the global namespace of the script, and can
+be called without any module prefix. 
 """
 
 import subscript.langtypes as langtypes
@@ -13,13 +14,27 @@ functions = registry.Registry('main')
 
 @functions.register
 def lock(lockall=False):
+    '''
+    If `lockall` is False, and the script was called by a Person event, then
+    that Person's movement will cease. Otherwise, the function locks all
+    overworlds on-screen in place.
+
+    :param lockall: Lock every overworld if True
+    '''
     if lockall:
         return ('lockall',)
     else:
         return ('lock',)
 
 @functions.register
-def applymovement(overworld, movements):
+def applymovement(movements, overworld=0xFF):
+    '''
+    Moves the overworld with Person ID `overworld` with the movement set
+    `movements`. The function moves the player by default.
+
+    :param movements: A list of the movements to use.
+    :param overworld: The ID of the overworld to apply the movement to.
+    '''
     return ('applymovement', overworld, movements.value)
 
 @functions.register
