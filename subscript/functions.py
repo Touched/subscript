@@ -136,6 +136,7 @@ def finditem(item, quantity=1):
 
 @register
 def battle(species, level=70, helditem=0):
-    return ('setwildbattle', species, level, helditem, 'dowildbattle')
+    # Wild Pokemon battle
+    return (('setwildbattle', species, level, helditem), ('dowildbattle',))
 
 
