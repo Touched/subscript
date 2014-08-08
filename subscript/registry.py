@@ -1,4 +1,5 @@
 import subscript.script as script
+import functools
 
 class Registry(object):
 
@@ -7,9 +8,7 @@ class Registry(object):
         self.name = name
 
     def register(self, f):
-        '''
-        Decorator that registers its argument to the function list.
-        '''
+        @functools.wraps(f)
         def function(*args, **kwargs):
             ret = f(*args, **kwargs)
 
