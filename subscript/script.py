@@ -50,7 +50,7 @@ class Section(object):
         self.commands = []
         self._size = 0
         self._parent = parent
-        self.name = 'section' + str(self.__class__.counter)
+        self.name = type(self).__name__ + str(self.__class__.counter)
         self.__class__.counter += 1
 
     def append(self, command):
