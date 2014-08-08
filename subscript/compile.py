@@ -102,12 +102,12 @@ class Compile(object):
             ast.Import: self._handle_import,
             ast.ImportFrom: self._handle_import_from,
             }
-        
+
         if type(node) in node_types:
             node_types[type(node)](node)
         else:
             raise errors.CompileSyntaxError(node)
-        
+
         # Old Stuff VV
         """
         if type(node) == ast.Assign:
