@@ -89,6 +89,27 @@ class Compile(object):
         self.section.append(script.Command.create(command, *args))
 
     def _handle_node(self, node):
+        # New -- trying things out
+        # Does this work?
+        node_types = {
+            ast.Assign: self._handle_assign,
+            ast.Expr: self._handle_expr,
+            ast.If: self._handle_if,
+            ast.While: self._handle_while,
+            ast.AugAssign: self._handle_aug_assign,
+            ast.FunctionDef: self._handle_function_def,
+            ast.Return: self._handle_return,
+            ast.Import: self._handle_import,
+            ast.ImportFrom: self._handle_import_from,
+            }
+        
+        if type(node) in node_types:
+            node_types[type(node)](node)
+        else:
+            raise errors.CompileSyntaxError(node)
+        
+        # Old Stuff VV
+        """
         if type(node) == ast.Assign:
             self._handle_assign(node)
         elif type(node) == ast.Expr:
@@ -109,6 +130,7 @@ class Compile(object):
             self._handle_import_from(node)
         else:
             raise errors.CompileSyntaxError(node)
+        """
 
     def _handle_attribute(self, node):
         print(node.__dict__)
@@ -120,7 +142,9 @@ class Compile(object):
             asname = name.asname if name.asname else target
 
             # Find what we're importing
-            search_path = ['/home/james/here/code']
+            #search_path = ['/home/james/here/code']
+            # This gets the current directory
+            search_path = os.path.split(os.path.abspath(__file__))[0]
             for path in search_path:
                 for file in os.listdir(path):
                     # Just loop over files
