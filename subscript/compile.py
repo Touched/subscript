@@ -1,14 +1,15 @@
 import ast
-import time
-import os
+import json
 import operator
-import collections
-import subscript.datatypes as datatypes
-import subscript.script as script
-import subscript.langtypes as langtypes
-import subscript.functions as functions
-import subscript.errors as errors
+import os
 import runpy
+
+import subscript.codec
+import subscript.datatypes as datatypes
+import subscript.errors as errors
+import subscript.functions as functions
+import subscript.langtypes as langtypes
+import subscript.script as script
 
 class Compile(object):
     '''
@@ -50,7 +51,7 @@ class Compile(object):
                 for cmd in section.commands:
                     print('', cmd, sep='\t')
             else:
-                print('', section.data, sep='\t')
+                print('', section.debug, sep='\t')
 
     def status(self):
 
@@ -104,6 +105,9 @@ class Compile(object):
             self._handle_import_from(node)
         else:
             raise errors.CompileSyntaxError(node)
+
+    def _handle_attribute(self, node):
+        print(node.__dict__)
 
     def _handle_import(self, node):
         for name in node.names:
@@ -293,7 +297,7 @@ class Compile(object):
             right = self._handle_arithmetic(node.right)
             return self._op_bin(node.op)(left, right)
         elif type(node) == ast.UnaryOp:
-            value =  self._handle_arithmetic(node.operand)
+            value = self._handle_arithmetic(node.operand)
             return self._op_unary(node.op)(value)
         elif type(node) == ast.Num:
             return node.n
@@ -361,7 +365,9 @@ class Compile(object):
 
     # Expressions
     def _handle_expr(self, node):
-        if type(node.value) == ast.Call:
+        if type(node.value) == ast.Attribute:
+            self._handle_attribute(node.value)
+        elif type(node.value) == ast.Call:
             self._handle_function(node.value)
         elif type(node.value) == ast.Name:
             self._handle_keyword(node.value)
@@ -371,14 +377,19 @@ class Compile(object):
     def _handle_function(self, node):
         # Handles ast.Call objects
 
-        call = node.func.id
+        if type(node.func) == ast.Name:
+            call = node.func.id
 
-        # If the name is in the symbol table, we have a user-defined function
-        if call in self.symbols:
-            self.section.append(self.symbols[call])
+            # If the name is in the symbol table, we have a user-defined function
+            if call in self.symbols:
+                self.section.append(self.symbols[call])
 
-
-            # We don't want to handle the next case
+                # We don't want to handle the next case
+                return
+        elif type(node.func) == ast.Attribute:
+            print(node.func.__dict__)
+            print(node.func.ctx.__dict__)
+            print(node.func.value.__dict__)
             return
 
         # Otherwise, we have a built-in function
@@ -391,10 +402,10 @@ class Compile(object):
             key, value = keyword.arg, self._handle_function_arg(keyword.value)
             kwargs[key] = value
 
-        if call not in functions.registry:
+        if call not in functions.functions:
             raise errors.CompileNameError(call)
 
-        cmd = functions.registry[call](*args, **kwargs)
+        cmd = functions.functions[call](*args, **kwargs)
         self.section.append(cmd)
 
     def _handle_function_arg(self, node):
@@ -466,7 +477,7 @@ class Compile(object):
     def _handle_control_end(self):
         # The the last command ends the section, don't return
         if self.section.last().name not in ['end', 'return', 'goto']:
-            #self.section.append(script.Command.create('return'))
+            # self.section.append(script.Command.create('return'))
             self.section.append(script.Command.create('goto', self.returnhere))
 
     def _handle_condition(self, node, allow_return=True, invert=False):
@@ -616,9 +627,6 @@ class Compile(object):
         else:
             raise errors.CompileTypeError(left, "Invalid comparison")
 
-import json
-import sys
-import subscript.codec, codecs
 
 def pdecode(data):
     out = ''
@@ -635,8 +643,8 @@ items_table = []
 attacks_table = []
 
 if __name__ == '__main__':
-    #https://github.com/thekaratekid552/Secret-Tool/blob/master/PokeRoms.ini
-    #https://github.com/shinyquagsire23/MEH/tree/master/src/us/plxhack/MEH
+    # https://github.com/thekaratekid552/Secret-Tool/blob/master/PokeRoms.ini
+    # https://github.com/shinyquagsire23/MEH/tree/master/src/us/plxhack/MEH
     with open('tables/text.json') as table:
         table = json.loads(table.read())
     decode = [k for k, v in sorted(table['normal'].items())]
