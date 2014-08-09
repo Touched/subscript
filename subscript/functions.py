@@ -100,17 +100,6 @@ def lock(lockall=False):
         return ('lock',)
 
 @functions.register
-def applymovement(movements, overworld=0xFF):
-    '''
-    Moves the overworld with Person ID `overworld` with the movement set
-    `movements`. The function moves the player by default.
-
-    :param movements: A list of the movements to use.
-    :param overworld: The ID of the overworld to apply the movement to.
-    '''
-    return ('applymovement', overworld, movements.value)
-
-@functions.register
 def message(string, keepopen=False):
     '''
     Displays message with text `string` in a message box. If `keepopen` is ``True``,
@@ -400,6 +389,7 @@ def sound(number):
 
     :param sound: The number of the sound to play.
     '''
+    return ('sound', number)
 
 @functions.register
 def waitsound(number):
@@ -466,11 +456,85 @@ def removeitem(item, quantity=1):
     Removes quantity of item index from the player's Bag.
 
     If you attempt to remove more of the item than the player actually has, then this command will do absolutely nothing, and they will keep the item.
+    
+    :param item: The item to remove.
+    :param quantity: The amount of the item to remove. Defaults to ``1``.
     '''
     return ('removeitem', item, quantity)
 
+@functions.register
+def checkitemroom(item, quantity=1):
+    '''
+    Checks if the player has enough space in the Bag to hold `quantity` of `item`.
+    If there is room, it sets variable 0x800D (``LASTRESULT``) to 0x0001, otherwise it is set to 0x0000.
+    
+    :param item: The item to check.
+    :param quantity: The amount of the item to check. Defaults to ``1``.
+    '''
+    return ('checkitemroom', item, quantity)
+
+@functions.register
+def checkitem(item, quantity=1):
+    '''
+    Checks if the player has `quantity` or more of `item` in the Bag.
+    Sets variable 0x800D (``LASTRESULT``) to 0x0001 if the player has enough of `item`, or 0x0000 if they have fewer than `quantity` of `item`.
+    
+    :param item: The item to check.
+    :param quantity: The amount of item to check for. Defaults to ``1``.
+    '''
+    reutrn ('checkitem', item, quantity)
+
+# Skipped 0x48 because I wasn't sure how to implement right now.
+# Skipped 0x49 & 0x4A -- missing from DavidJCobb's database
+
+@functions.register
+def adddecoration(decoration):
+    '''
+    In FR/LG, this command is a ``nop``. (The argument is read, but not used for anything.)
+    
+    :param decoration: The decoration to add.
+    '''
+    return ('addecoration', decoration)
+
+@functions.register
+def removedecoration(decoration):
+    '''
+    In FR/LG, this command is a ``nop``. (The argument is read, but not used for anything.)
+    
+    :param decoration: The decoration to remove.
+    '''
+    return ('removedecoration', decoration)
+
+@functions.register
+def checkdecorationroom(decoration):
+    '''
+    In FR/LG, this command is a ``nop``. (The argument is read, but not used for anything.)
+    
+    :param decoration: The decoration to check for.
+    '''
+    # Suggest: Renaming in command database?
+    return ('testdecoration', decoration)
+
+@functions.register
+def checkdecoration(decoration):
+    '''
+    In FR/LG, this command is a ``nop``. (The argument is read, but not used for anything.)
+    
+    :param decoration: The decoration to check for.
+    '''
+    return ('checkdecoration', decoration)
+
+@functions.register
+def applymovement(movements, overworld=0xFF):
+    '''
+    Moves the overworld with Person ID `overworld` with the movement set
+    `movements`. The function moves the player by default.
+
+    :param movements: A list of the movements to use.
+    :param overworld: The ID of the overworld to apply the movement to. Defaults to ``0xFF`` (``MOVE_PLAYER``)
+    '''
+    return ('applymovement', overworld, movements.value)
 
 
-
-# Finished up to command number 0x45
-# Resume from http://www.sphericalice.co/romhacking/davidjcobb_script/#c-46
+# Finished up to command number 0x4F
+# Resume from http://www.sphericalice.co/romhacking/davidjcobb_script/#c-50
