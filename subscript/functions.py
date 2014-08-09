@@ -9,12 +9,11 @@ import subscript.registry as registry
 
 functions = registry.Registry('main')
 
-# Begin standard built-in functions:
-# These are imported into the global namespace of the script
+# =========================================
+# TODO: Missing functions
+# =========================================
 
-# Missing functions
-# - callstdif
-# - gotostdif
+# Functions in square brackets are present here, but should be reviewed
 
 # Functions that should be implemented elsewhere
 # Assignment type functions
@@ -33,6 +32,9 @@ functions = registry.Registry('main')
 # - subvar
 # - copyvar
 # - copyvarifnotzero
+# - setflag
+# - clearflag
+# - resetvars
 
 # Comparison type functions
 # - comparebanks
@@ -43,6 +45,41 @@ functions = registry.Registry('main')
 # - comparefarbytes
 # - compare
 # - comparevars
+# - checkflag
+
+# Conditional commands
+# - callstdif
+# - gotostdif
+
+# ----------------------------------------------
+
+# Functions that should be in a submodule?
+
+# Specials:
+# - special
+# - special2
+# - waitstate
+
+# Sounds:
+# - playsong
+# - playsong2
+# - fadedefault
+# - fadesong
+# - fadeout
+# - fadein
+# - [fanfare]
+# - [waitfanfare]
+# - [sound]
+# - [waitsound]
+
+# ----------------------------------------------
+
+# Nop functions
+
+# - cmd2c
+# - checkdailyflags
+
+# ----------------------------------------------
 
 @functions.register
 def lock(lockall=False):
@@ -330,13 +367,43 @@ def thumb(pointer):
     routine = pointer | 1
     return ('callasm', routine)
 
-@functions.registry
+@functions.register
 def asm(pointer):
     '''
     Calls the assembly routine at the pointer, without setting the mode.
 
     :param pointer: Offset
     '''
-    return ('callasm')
+    return ('callasm', pointer)
 
+@functions.register
+def loadthumb(pointer):
+    '''
+    Loads a Thumb routine into the script RAM.
 
+    :param pointer: Offset
+    '''
+    return ('cmd24', pointer)
+
+@functions.register
+def sound(number):
+    '''
+    Plays the specified (sound_number) sound. Only one sound may play at a time, with newer ones interrupting older ones.
+
+    If you specify sound 0x0000, then all music will be muted. If you specify the number of a non-existent sound, no new sound will be played, and currently-playing sounds will not be interrupted. A comprehensive list of sound numbers may be found on PokeCommunity.
+
+    Note that when using older versions of VisualBoyAdvance, the sound channel used for this command (and, sometimes, in music) will be completely muted after loading from a savestate.
+
+    :param sound: The number of the sound to play.
+    '''
+
+@functions.register
+def waitsound(number):
+    '''
+    Blocks script execution until the currently-playing sound (triggered by sound) finishes playing.
+    '''
+
+    return ('checksound',)
+
+# Finished up to command number 0x38
+# Resume from http://www.sphericalice.co/romhacking/davidjcobb_script/#c-39
