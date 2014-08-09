@@ -56,7 +56,11 @@ class PoketextParser(Parser):
             self.table = json.loads(table.read())
 
     def single(self, letter):
-        self._output.append(self.table['normal'][letter])
+        # Japanese Hiragana/Katana is unicode between 0x3040 and 0x30FF
+        if ord(letter) > 0x303F and ord(letter) < 0x3100:
+            self._output.append(self.table['japanese'][letter])
+        else:
+            self._output.append(self.table['normal'][letter])
 
     def group(self, group):
         self._output.append(self.table['group'][group])
