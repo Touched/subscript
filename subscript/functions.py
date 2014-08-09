@@ -13,6 +13,10 @@ functions = registry.Registry('main')
 # TODO: Missing functions
 # =========================================
 
+
+# TODO: Some functions end scripts
+# Record which ones these are. (Possibly warp, warpmuted, etc.)
+
 # Functions in square brackets are present here, but should be reviewed
 
 # Functions that should be implemented elsewhere
@@ -405,5 +409,68 @@ def waitsound(number):
 
     return ('checksound',)
 
-# Finished up to command number 0x38
-# Resume from http://www.sphericalice.co/romhacking/davidjcobb_script/#c-39
+@functions.registry
+def warp(bank=127, number=127, byte=127, x=0, y=0, style='normal'):
+    '''
+    Sends the player to Warp warp on Map bank.map. If the specified warp is 0xFF,
+    then the player will instead be sent to (X, Y) on the map.
+    This command will also play Sappy song 0x0009, but only if the bytes at 0x02031DD8 and 0x0203ADFA are not equal to 0x00 and 0x02, respectively.
+
+    :param bank: The map bank to warp to.
+    :param number: The map number in `bank` to warp to.
+    :param byte: The number of the warp to go go.
+    :param x: The x coordinate to go to. Can be a variable.
+    :param y: The y coordinate to go to. Can be a variable.
+    :param style: How to warp. Can be ``'normal'``, ``'mute'``, ``'walk'``, ``'teleport'``, ``'fall'``, ``'safari'``, ``'4'``, ``'5'`` or ``'set'``
+    '''
+
+    if style == 'normal':
+        return ('warp', bank, number, byte, x, y)
+    elif style == 'mute':
+        return ('warpmuted', bank, number, byte, x, y)
+    elif style == 'walk':
+        return ('warpwalk', bank, number, byte, x, y)
+    elif style == 'teleport':
+        return ('warpteleport', bank, number, byte, x, y)
+    elif style == 'fall':
+        return ('warphole', bank, number)
+    elif style == 'safari':
+        return ('warp3', bank, number, byte, x, y)
+    elif style == '4':
+        return ('warp4', bank, number, byte, x, y)
+    elif style == '5':
+        return ('warp5', bank, number, byte, x, y)
+    elif style == 'set':
+        return ('setwarpplace', bank, number)
+
+@functions.register
+def getplayerpos(var_x, var_y):
+    '''
+    Retrieves the player's zero-indexed X- and Y-coordinates in the map, and stores them in the specified variables.
+
+    :param var_x: The variable to store the X-coordinate in.
+    :param var_y: The variable to store the Y-coordinate in.
+    '''
+    return (getplayerpos, var_x, var_y)
+
+@functions.register
+def countparty():
+    '''
+    Retrieves the number of Pokémon in the player's party, and stores that number in variable 0x800D (LASTRESULT).
+    '''
+    return ('countPokémon',)
+
+@functions.register
+def removeitem(item, quantity=1):
+    '''
+    Removes quantity of item index from the player's Bag.
+
+    If you attempt to remove more of the item than the player actually has, then this command will do absolutely nothing, and they will keep the item.
+    '''
+    return ('removeitem', item, quantity)
+
+
+
+
+# Finished up to command number 0x45
+# Resume from http://www.sphericalice.co/romhacking/davidjcobb_script/#c-46
