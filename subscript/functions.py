@@ -12,6 +12,38 @@ functions = registry.Registry('main')
 # Begin standard built-in functions:
 # These are imported into the global namespace of the script
 
+# Missing functions
+# - callstdif
+# - gotostdif
+
+# Functions that should be implemented elsewhere
+# Assignment type functions
+# - writebytetooffset
+# - loadbytefrompointer
+# - setfarbyte
+# - copyscriptbanks
+# - loadpointer
+# - setbyte
+# - setbyte2
+# - setfarbyte
+# - copyscriptbanks
+# - copybyte
+# - setvar
+# - addvar
+# - subvar
+# - copyvar
+# - copyvarifnotzero
+
+# Comparison type functions
+# - comparebanks
+# - comparebanktobyte
+# - comparebanktofarbyte
+# - comparefarbytetobank
+# - comparefarbytetobyte
+# - comparefarbytes
+# - compare
+# - comparevars
+
 @functions.register
 def lock(lockall=False):
     '''
@@ -134,6 +166,24 @@ def callstd(func):
     return ('callstd', func)
 
 @functions.register
+def goto(destination):
+    '''
+    Jumps to `destination` and continues script execution from there.
+
+    :param destination: Location to jump to.
+    '''
+    return ('goto', destination)
+
+@functions.register
+def gotostd(func):
+    '''
+    Jumps to the standard script function and continues execution from there.
+
+    :param func:  The index of the function to call.
+    '''
+    return ('gotostd', func)
+
+@functions.register
 def pause(time):
     '''
     Blocks script execution for ``time``.
@@ -231,5 +281,62 @@ def battle(species, level=70, item=0):
     '''
 
     return [('setwildbattle', species, level, item), ('dowildbattle',)]
+
+@functions.register
+def jumpram():
+    '''
+    Executes a script stored in a default RAM location.
+    '''
+    return ('jumpram',)
+
+@functions.register
+def killscript():
+    '''
+    Executes a script stored in a default RAM location.
+    '''
+    return ('killscript',)
+
+@functions.register
+def setbyte(byte):
+    '''
+    Pads the specified value to a dword, and then writes that dword to a
+    predefined address (0x0203AAA8).
+
+    :param byte: Value to set
+    '''
+    return ('setbyte', byte)
+
+@functions.register
+def arm(pointer):
+    '''
+    Calls the ARM assembly routine stored at offset.
+
+    :param pointer: Offset
+    '''
+
+    # Unset Thumb mode
+    routine = pointer & ~(1)
+    return ('callasm', routine)
+
+@functions.register
+def thumb(pointer):
+    '''
+    Calls the Thumb assembly routine stored at offset.
+
+    :param pointer: Offset
+    '''
+
+    # Set Thumb mode
+    routine = pointer | 1
+    return ('callasm', routine)
+
+@functions.registry
+def asm(pointer):
+    '''
+    Calls the assembly routine at the pointer, without setting the mode.
+
+    :param pointer: Offset
+    '''
+    return ('callasm')
 
 
