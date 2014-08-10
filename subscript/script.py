@@ -95,10 +95,11 @@ class SectionRaw(Section):
     Used for appending raw binary data to a script section.
     '''
 
-    def __init__(self, parent, data):
+    def __init__(self, parent, data, debug=None):
         super().__init__(parent)
         self.data = data
         self._size = len(data)
+        self.debug = debug if debug else data
 
     def append(self, command):
         raise NotImplementedError

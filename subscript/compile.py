@@ -322,7 +322,7 @@ class Compile(object):
             return self.operators[type(op)]
         else:
             raise errors.CompileSyntaxError(op)
-        
+
         """
         if type(op) == ast.Mult:
             return operator.mul
@@ -358,7 +358,7 @@ class Compile(object):
             return self.operators[type(op)]
         else:
             raise errors.CompileSyntaxError(op)
-        
+
         """
         if type(op) == ast.Not:
             return operator.not_
@@ -486,7 +486,7 @@ class Compile(object):
             kwargs[key] = value
 
         if call not in registry:
-            raise errors.CompileNameError(call)
+            raise errors.CompileNameError(node)
 
         cmd = registry[call](*args, **kwargs)
         self.section.append(cmd)

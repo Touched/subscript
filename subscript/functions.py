@@ -399,7 +399,7 @@ def waitsound(number):
 
     return ('checksound',)
 
-@functions.registry
+@functions.register
 def warp(bank=127, number=127, byte=127, x=0, y=0, style='normal'):
     '''
     Sends the player to Warp warp on Map bank.map. If the specified warp is 0xFF,
@@ -456,7 +456,7 @@ def removeitem(item, quantity=1):
     Removes quantity of item index from the player's Bag.
 
     If you attempt to remove more of the item than the player actually has, then this command will do absolutely nothing, and they will keep the item.
-    
+
     :param item: The item to remove.
     :param quantity: The amount of the item to remove. Defaults to ``1``.
     '''
@@ -467,7 +467,7 @@ def checkitemroom(item, quantity=1):
     '''
     Checks if the player has enough space in the Bag to hold `quantity` of `item`.
     If there is room, it sets variable 0x800D (``LASTRESULT``) to 0x0001, otherwise it is set to 0x0000.
-    
+
     :param item: The item to check.
     :param quantity: The amount of the item to check. Defaults to ``1``.
     '''
@@ -478,11 +478,11 @@ def checkitem(item, quantity=1):
     '''
     Checks if the player has `quantity` or more of `item` in the Bag.
     Sets variable 0x800D (``LASTRESULT``) to 0x0001 if the player has enough of `item`, or 0x0000 if they have fewer than `quantity` of `item`.
-    
+
     :param item: The item to check.
     :param quantity: The amount of item to check for. Defaults to ``1``.
     '''
-    reutrn ('checkitem', item, quantity)
+    return ('checkitem', item, quantity)
 
 # Skipped 0x48 because I wasn't sure how to implement right now.
 # Skipped 0x49 & 0x4A -- missing from DavidJCobb's database
@@ -491,7 +491,7 @@ def checkitem(item, quantity=1):
 def adddecoration(decoration):
     '''
     In FR/LG, this command is a ``nop``. (The argument is read, but not used for anything.)
-    
+
     :param decoration: The decoration to add.
     '''
     return ('addecoration', decoration)
@@ -500,7 +500,7 @@ def adddecoration(decoration):
 def removedecoration(decoration):
     '''
     In FR/LG, this command is a ``nop``. (The argument is read, but not used for anything.)
-    
+
     :param decoration: The decoration to remove.
     '''
     return ('removedecoration', decoration)
@@ -509,7 +509,7 @@ def removedecoration(decoration):
 def checkdecorationroom(decoration):
     '''
     In FR/LG, this command is a ``nop``. (The argument is read, but not used for anything.)
-    
+
     :param decoration: The decoration to check for.
     '''
     # Suggest: Renaming in command database?
@@ -519,7 +519,7 @@ def checkdecorationroom(decoration):
 def checkdecoration(decoration):
     '''
     In FR/LG, this command is a ``nop``. (The argument is read, but not used for anything.)
-    
+
     :param decoration: The decoration to check for.
     '''
     return ('checkdecoration', decoration)
