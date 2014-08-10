@@ -16,6 +16,8 @@ functions = registry.Registry('main')
 
 # TODO: Some functions end scripts
 # Record which ones these are. (Possibly warp, warpmuted, etc.)
+# - end
+# - goto -- ends a section
 
 # Functions in square brackets are present here, but should be reviewed
 
@@ -221,16 +223,6 @@ def pause(time):
     :param time: The number of frame to wait
     '''
     return ('pause', time)
-
-@functions.register
-def disappear(sprite):
-    '''
-    Hides the overworld with ID ``sprite``
-
-    :param sprite: The ID of the overworld to hide.
-    '''
-
-    return ('hidesprite', sprite)
 
 @functions.register
 def release(doall=False):
@@ -535,6 +527,68 @@ def applymovement(movements, overworld=0xFF):
     '''
     return ('applymovement', overworld, movements.value)
 
+# 0x50 - applymovementpos is somewhat broken
+@functions.register
+def applymovementplayer(movements):
+    '''
+    Moves the player overworld with the movement set `movements`.
 
-# Finished up to command number 0x4F
-# Resume from http://www.sphericalice.co/romhacking/davidjcobb_script/#c-50
+    :param movements: A lits of the movements to use.
+    '''
+    # Format: OW movements X Y
+    # OW must be 0xFF, X and Y don't do anything
+    return ('applymovementpos', 0xFF, movements, 0x0, 0x0)
+
+@functions.register
+def waitmovement(overworld=0x0):
+    '''
+    Blocks script execution until the movements being applied to the Person ID
+    `overworld` finish.
+    If `overworld` is ``0x0000``, the execution will wait until all overworlds
+    affected finish.
+
+    :param overworld: The ID of the overworld to wait for. Defaults to ``0x0000``
+    '''
+    return ('waitmovement', overworld)
+
+@functions.register
+def waitmovementplayer():
+    '''
+    A clone of :func:`waitmovement` that only works with the player overworld.
+    '''
+    # Format: OW X Y
+    # Only works if OW = 0xFF, X and Y have no effect
+    return ('waitmovementpos', 0xFF, 0x0, 0x0)
+
+@functions.register
+def disappear(sprite):
+    '''
+    Hides the overworld with ID ``sprite``
+
+    :param sprite: The ID of the overworld to hide.
+    '''
+
+    return ('hidesprite', sprite)
+
+@functions.register
+def hide(sprite):
+    '''
+    An alias for :func:`disappear`.
+    '''
+    return disappear.inner(sprite)
+
+# TODO: 0x54 hidespritepos
+# Commands 0x55 - 0x59 are missing
+
+@functions.register
+def faceplayer():
+    '''
+    If the script was called by a Person event, then that Person will turn to
+    face the tile that the player is stepping off of.
+    '''
+    return ('faceplayer',)
+
+# Command 0x5B is also missing
+
+# Finished up to command number 0x5B
+# Resume from http://www.sphericalice.co/romhacking/davidjcobb_script/#c-5c
