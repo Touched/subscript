@@ -120,7 +120,7 @@ class String(SectionType):
 
 class Raw(SectionType):
     '''
-    For applymovement style commands.
+    A single-byte value. Can be for applymovement style commands.
     '''
 
     def section(self):
@@ -139,7 +139,7 @@ class Flag(Type):
 
 class Var(Type):
     '''
-    A flag.
+    A variable.
     '''
 
     @property
@@ -148,7 +148,7 @@ class Var(Type):
 
 class Bank(Type):
     '''
-    A flag.
+    A bank.
     '''
 
     @property
@@ -157,7 +157,7 @@ class Bank(Type):
 
 class Buffer(Type):
     '''
-    A flag.
+    A buffer.
     '''
 
     @property
@@ -166,7 +166,8 @@ class Buffer(Type):
 
 class HiddenVar(Type):
     '''
-    A flag.
+    A hidden variable.
+    Usage within the game is not yet understood.
     '''
 
     @property
@@ -175,7 +176,7 @@ class HiddenVar(Type):
 
 class Pointer(Type):
     '''
-    A flag.
+    A pointer.
     '''
 
     @property

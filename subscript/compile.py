@@ -16,6 +16,33 @@ class Compile(object):
     '''
     '''
 
+    # All math operators of some kind.
+    # Using a dictionary to store these is a lot more elegant than
+    # a bunch of if statements.
+    operators = {
+        # Binary
+        ast.Mult: operator.mul,
+        ast.Add: operator.add,
+        ast.Div: operator.truediv,
+        ast.FloorDiv: operator.floordiv,
+        ast.Sub: operator.sub,
+        ast.BitAnd: operator.and_,
+        ast.BitXor: operator.xor,
+        ast.BitOr: operator.or_,
+        ast.LShift: operator.lshift,
+        ast.RShift: operator.rshift,
+        ast.Mod: operator.mod,
+        ast.Pow: operator.pow,
+
+        # Unary
+        ast.Not: operator.not_,
+        ast.USub: operator.neg,
+        ast.UAdd: operator.pos,
+        ast.Invert: operator.invert,
+
+        # TODO: Comparison?
+        }
+
     def __init__(self, source, base):
         '''
         Constructor.
@@ -34,9 +61,20 @@ class Compile(object):
         # State variables
         self.script = script.Script(base)
         self.symbols = {
-                        'PLAYERFACING': langtypes.Var(self.script, 0x800C),
+                        # General variables
                         'LASTRESULT': langtypes.Var(self.script, 0x800D),
-                        'LASTTALKED': langtypes.Var(self.script, 0x800F)
+                        'LASTTALKED': langtypes.Var(self.script, 0x800F),
+
+                        # Sprite facing
+                        'PLAYERFACING': langtypes.Var(self.script, 0x800C),
+                        'FACE_DOWN': langtypes.Raw(self.script, 0x1),
+                        'FACE_UP': langtypes.Raw(self.script, 0x2),
+                        'FACE_LEFT': langtypes.Raw(self.script, 0x3),
+                        'FACE_RIGHT': langtypes.Raw(self.script, 0x4),
+
+                        # Applymovements
+                        'MOVE_PLAYER': langtypes.Raw(self.script, 0xFF),
+                        'MOVE_CAMERA': langtypes.Raw(self.script, 0x7F),
                         }
 
         self.nextsection = None
@@ -103,6 +141,7 @@ class Compile(object):
             ast.ImportFrom: self._handle_import_from,
             }
 
+        # Try to handle the node, if possible.
         if type(node) in node_types:
             node_types[type(node)](node)
         else:
@@ -278,6 +317,13 @@ class Compile(object):
         return langtypes.Type[name](self.script, value)
 
     def _op_bin(self, op):
+        # Get the appropriate binary operator from the dictionary
+        if type(op) in self.operators:
+            return self.operators[type(op)]
+        else:
+            raise errors.CompileSyntaxError(op)
+        
+        """
         if type(op) == ast.Mult:
             return operator.mul
         elif type(op) == ast.Add:
@@ -304,8 +350,16 @@ class Compile(object):
             return operator.pow
         else:
             raise errors.CompileSyntaxError(op)
+        """
 
     def _op_unary(self, op):
+        # Get the appropriate unary operator from the dictionary
+        if type(op) in self.operators:
+            return self.operators[type(op)]
+        else:
+            raise errors.CompileSyntaxError(op)
+        
+        """
         if type(op) == ast.Not:
             return operator.not_
         elif type(op) == ast.USub:
@@ -316,6 +370,7 @@ class Compile(object):
             return operator.invert
         else:
             raise errors.CompileSyntaxError(op)
+        """
 
     def _handle_arithmetic(self, node):
         if type(node) == ast.Name:
