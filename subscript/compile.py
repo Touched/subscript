@@ -46,8 +46,8 @@ class Compile(object):
     def __init__(self, source, base):
         '''
         Constructor.
-        @param source: The source to be parsed, as a string.
-        @param base: The offset at which to start the script.
+        :param source: The source to be parsed, as a string.
+        :param base: The offset at which to start the script.
         '''
 
         # Convert line endings
