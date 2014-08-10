@@ -41,7 +41,34 @@ class Compile(object):
         ast.Invert: operator.invert,
 
         # TODO: Comparison?
-        }
+    }
+
+    conditions = {
+        ast.Lt: 0,
+        ast.Eq: 1,
+        ast.Gt: 2,
+        ast.LtE: 3,
+        ast.GtE: 4,
+        ast.NotEq: 5
+    }
+
+    # Change the operator for when the sides of the comparison are swapped.
+    swap_operator = {
+        ast.Lt: ast.Gt(),
+        ast.Gt: ast.Lt(),
+        ast.LtE: ast.GtE(),
+        ast.GtE: ast.LtE()
+    }
+
+    # Invert the operator for an opposite (not) comparison
+    invert_operator = {
+        ast.Lt: ast.GtE(),
+        ast.Gt: ast.LtE(),
+        ast.LtE: ast.Gt(),
+        ast.GtE: ast.Lt(),
+        ast.Eq: ast.NotEq(),
+        ast.NotEq: ast.Eq()
+    }
 
     def __init__(self, source, base):
         '''
@@ -49,6 +76,20 @@ class Compile(object):
         :param source: The source to be parsed, as a string.
         :param base: The offset at which to start the script.
         '''
+
+        self.node_types = {
+              ast.Assign: self._handle_assign,
+              ast.Expr: self._handle_expr,
+              ast.If: self._handle_if,
+              ast.While: self._handle_while,
+              ast.AugAssign: self._handle_aug_assign,
+              ast.FunctionDef: self._handle_function_def,
+              ast.Return: self._handle_return,
+              ast.Import: self._handle_import,
+              ast.ImportFrom: self._handle_import_from,
+              }
+
+        # Ast node to script condition number
 
         # Convert line endings
         self.source = source.replace('\r\n', '\n')
@@ -129,21 +170,11 @@ class Compile(object):
     def _handle_node(self, node):
         # New -- trying things out
         # Does this work?
-        node_types = {
-            ast.Assign: self._handle_assign,
-            ast.Expr: self._handle_expr,
-            ast.If: self._handle_if,
-            ast.While: self._handle_while,
-            ast.AugAssign: self._handle_aug_assign,
-            ast.FunctionDef: self._handle_function_def,
-            ast.Return: self._handle_return,
-            ast.Import: self._handle_import,
-            ast.ImportFrom: self._handle_import_from,
-            }
+
 
         # Try to handle the node, if possible.
-        if type(node) in node_types:
-            node_types[type(node)](node)
+        if type(node) in self.node_types:
+            self.node_types[type(node)](node)
         else:
             raise errors.CompileSyntaxError(node)
 
@@ -609,59 +640,48 @@ class Compile(object):
             raise errors.CompileSyntaxError(node)
 
         if invert:
-            op = self._invert_operator(op)
+            op = self.invert_operator[type(op)]
 
         try:
             self._handle_comparision(left, op, right, allow_return)
         except errors.CompileTypeError:
             # Swap operands and try again
-            op = self._swap_operator(op)
+            op = self.swap_operator[type(op)]
             self._handle_comparision(right, op, left, allow_return)
 
-    def _swap_operator(self, op):
-        '''
-        Change the operator for when the sides of the comparison are swapped.
-        '''
-        if type(op) == ast.Lt:
-            return ast.Gt()
-        elif type(op) == ast.Gt:
-            return ast.Lt()
-        elif type(op) == ast.LtE:
-            return ast.GtE()
-        elif type(op) == ast.GtE:
-            return ast.LtE()
-
-    def _invert_operator(self, op):
-        '''
-        Invert the operator for an opposite (not) comparison
-        '''
-        if type(op) == ast.Lt:
-            return ast.GtE()
-        elif type(op) == ast.Gt:
-            return ast.LtE()
-        elif type(op) == ast.LtE:
-            return ast.Gt()
-        elif type(op) == ast.GtE:
-            return ast.Lt()
-        elif type(op) == ast.Eq:
-            return ast.NotEq()
-        elif type(op) == ast.NotEq:
-            return ast.Eq()
+#     def _swap_operator(self, op):
+#         '''
+#         Change the operator for when the sides of the comparison are swapped.
+#         '''
+#         if type(op) == ast.Lt:
+#             return ast.Gt()
+#         elif type(op) == ast.Gt:
+#             return ast.Lt()
+#         elif type(op) == ast.LtE:
+#             return ast.GtE()
+#         elif type(op) == ast.GtE:
+#             return ast.LtE()
+#
+#     def _invert_operator(self, op):
+#         '''
+#         Invert the operator for an opposite (not) comparison
+#         '''
+#         if type(op) == ast.Lt:
+#             return ast.GtE()
+#         elif type(op) == ast.Gt:
+#             return ast.LtE()
+#         elif type(op) == ast.LtE:
+#             return ast.Gt()
+#         elif type(op) == ast.GtE:
+#             return ast.Lt()
+#         elif type(op) == ast.Eq:
+#             return ast.NotEq()
+#         elif type(op) == ast.NotEq:
+#             return ast.Eq()
 
     def _op(self, op):
         # Convert op to its script value
-        if type(op) == ast.Lt:
-            return 0
-        elif type(op) == ast.Gt:
-            return 2
-        elif type(op) == ast.LtE:
-            return 3
-        elif type(op) == ast.GtE:
-            return 4
-        elif type(op) == ast.Eq:
-            return 1
-        elif type(op) == ast.NotEq:
-            return 5
+        return self.conditions[type(op)]
 
     def _add_jump(self, op, allow_return):
         self.section.append(script.Command.create('if1', self._op(op), self.nextsection.dynamic()))
@@ -672,7 +692,7 @@ class Compile(object):
         if type(left) == langtypes.Flag and type(right):
             if not right:
                 # Switch the comparison to limit the amount of testing
-                op = self._invert_operator(op)
+                op = self.invert_operator[type(op)]
 
             if type(op) != ast.NotEq and type(op) != ast.Eq:
                 raise errors.CompileSyntaxError(op, "Invalid comparison")
