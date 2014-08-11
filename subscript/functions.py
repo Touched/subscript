@@ -55,6 +55,7 @@ functions = registry.Registry('main')
 # - comparevars
 # - checkflag
 # - checktrainerflag
+# - checkattack
 
 # Conditional commands
 # - callstdif
@@ -694,8 +695,12 @@ def hidepokepic():
     '''
     return ('hidepokepic',)
 
+# 0x77 is a nop
 
+# 0x78 is more complicated. Should look at braille text examples and automatically
+# convert to the proper commands
 
+# The buffer pokemon commands have the é symbol in them. Fix this up
 
-# Finished up to command number 0x5B
-# Resume from http://www.sphericalice.co/romhacking/davidjcobb_script/#c-5c
+# Finished up to command number 0x7C
+# Resume from http://www.sphericalice.co/romhacking/davidjcobb_script/#c-7C
