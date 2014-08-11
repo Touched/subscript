@@ -41,6 +41,8 @@ functions = registry.Registry('main')
 # - setflag
 # - clearflag
 # - resetvars
+# - cleartrainerflag
+# - settrainerflag
 
 # Comparison type functions
 # - comparebanks
@@ -52,6 +54,7 @@ functions = registry.Registry('main')
 # - compare
 # - comparevars
 # - checkflag
+# - checktrainerflag
 
 # Conditional commands
 # - callstdif
@@ -293,7 +296,7 @@ def finditem(item, quantity=1):
     return out
 
 @functions.register
-def battle(species, level=70, item=0):
+def wildbattle(species, level=70, item=0):
     '''
     Triggers a prefined wild Pokemon battle. Blocks until the battle finishes.
 
@@ -589,6 +592,110 @@ def faceplayer():
     return ('faceplayer',)
 
 # Command 0x5B is also missing
+
+# TODO: 0x5C trainerbattle
+@functions.register
+def repeattrainerbattle():
+    '''
+    Starts a trainer battle using the battle information stored in RAM (usually
+    by trainerbattle, which actually calls this command behind-the-scenes), and
+    blocks script execution until the battle finishes.
+    '''
+    return ('repeattrainerbattle',)
+
+# Missing 0x5E - 0x65
+
+@functions.register
+def waitmsg():
+    '''
+    If a standard message box (or its text) is being drawn on-screen, this
+    command blocks script execution until the box and its text have been fully
+    drawn.
+    '''
+    return ('waitmsg',)
+
+@functions.register
+def preparemsg(message):
+    '''
+    Starts displaying a standard message box containing the specified text. If
+    text is a pointer, then the string at that offset will be loaded and used.
+    If text is script bank 0, then the value of script bank 0 will be treated
+    as a pointer to the text. (You can use loadpointer to place a string pointer
+    in a script bank.)
+
+    :param message: The message to display.
+    '''
+    return ('preparemsg', message.value)
+
+@functions.register
+def waitkeypress():
+    '''
+    Blocks script execution until the player presses any key.
+    '''
+    return ('waitkeypress',)
+
+@functions.register
+def yesnobox(x, y):
+    '''
+    Displays a YES/NO multichoice box at the specified coordinates, and blocks
+    script execution until the user makes a selection. Their selection is stored
+    in variable 0x800D (LASTRESULT); 0x0000 for "NO" or if the user pressed B,
+    and 0x0001 for "YES".
+
+    :param x: The x coordinate on the screen.
+    :param y: The y coordinate on the screen.
+    '''
+    return ('yesnobox',)
+
+@functions.register
+def multichoice(x, y, choices, cancel=1, default=None, per_row=-1):
+    '''
+    Displays a multichoice box from which the user can choose a selection, and
+    blocks script execution until a selection is made. Lists of options are
+    predefined and the one to be used is specified with list.
+
+
+    '''
+
+    # TODO: Allow editing and adding mutlichoice lists from the editor
+    # TODO: Check that per_row is valid from the table of multichoice boxes
+    if per_row != -1:
+        if default == None:
+            return ('multichoice3', x, y, choices, default, cancel)
+        else:
+            # TODO: Emulate default functionality. For that, we'll need to allow
+            # Commands to add sections. (Alter compile to allow 'section' type
+            # to be returned
+            raise Exception('Cannot use default and per_row')
+    else:
+        if default == None:
+            return ('multichoice', x, y, choices, cancel)
+        else:
+            return ('multichoice2', x, y, choices, default, cancel)
+
+# Missing 0x71 - 0x74
+
+@functions.register
+def showpokepic(species, x, y):
+    '''
+    Displays a box containing the front sprite for the specified (species)
+    Pokémon species.
+
+    :param species: The species to show.
+    :param x: The x-coordinate.
+    :param y: The y-coordinate.
+    '''
+
+    return ('showpokepic', species, x, y)
+
+def hidepokepic():
+    '''
+    Hides all boxes displayed with showpokepic.
+    '''
+    return ('hidepokepic',)
+
+
+
 
 # Finished up to command number 0x5B
 # Resume from http://www.sphericalice.co/romhacking/davidjcobb_script/#c-5c
