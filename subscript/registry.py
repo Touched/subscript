@@ -1,7 +1,11 @@
 import subscript.script as script
 import functools
+import inspect
 
 class Registry(object):
+    '''
+    Registers module functions.
+    '''
 
     def __init__(self, name):
         self.registry = {}
@@ -23,6 +27,7 @@ class Registry(object):
                 return out
 
         function.inner = f
+        function.state = {}
 
         self.registry[f.__name__] = function
         return function
@@ -32,3 +37,9 @@ class Registry(object):
 
     def __getitem__(self, index):
         return self.registry[index]
+
+def function_name():
+    '''
+    Gets the name of the decorated function that this was called from.
+    '''
+    return inspect.stack()[1][3]
