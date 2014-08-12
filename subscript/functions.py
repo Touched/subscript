@@ -701,6 +701,15 @@ def hidepokepic():
 # convert to the proper commands
 
 # The buffer pokemon commands have the é symbol in them. Fix this up
+def bufferpoke(buffer, species):
+    '''
+    Writes the name of the Pokémon at index species to the specified buffer.
 
-# Finished up to command number 0x7C
-# Resume from http://www.sphericalice.co/romhacking/davidjcobb_script/#c-7C
+    :param buffer: The script buffer to write to.
+    :param species: The Pokemon name to buffer.
+    '''
+    return ('bufferPokémon', buffer, species)
+
+# Finished up to command number 0x7D
+# Resume from http://www.sphericalice.co/romhacking/davidjcobb_script/#c-7D
+
