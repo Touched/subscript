@@ -710,6 +710,15 @@ def bufferpoke(buffer, species):
     '''
     return ('bufferPokémon', buffer, species)
 
-# Finished up to command number 0x7D
-# Resume from http://www.sphericalice.co/romhacking/davidjcobb_script/#c-7D
+def bufferfirstpoke(buffer):
+    '''
+    Writes the name of the first Pokémon in the player's party to the specified buffer.
+
+    :param buffer: The buffer to write the name to.
+    '''
+
+    return ('bufferfirstPokémon', buffer)
+
+# Finished up to command number 0x7E
+# Resume from http://www.sphericalice.co/romhacking/davidjcobb_script/#c-7F
 
