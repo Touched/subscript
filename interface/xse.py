@@ -2,7 +2,7 @@
 XSE-style widgets
 '''
 
-from gi.repository import Gtk, Gio, GObject, Gdk, GtkSource, Pango, GtkSpell, Clutter, GLib
+from gi.repository import Gtk, Gio, GObject, Gdk, GtkSource, Pango, GtkSpell, GLib
 import webbrowser
 
 class Toolbar(Gtk.HBox):
