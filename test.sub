@@ -1,17 +1,9 @@
-import functions
-
 given = Flag(0x828)
 k = Var(0x8000)
 p = Pokemon('Charmander')
 catch = "Are you taking good care\nof Charmander?"
 
-functions.warning('hello')
-
 def function():
-    fanfare(0x13E)
-    fanfare(0x13E)
-    fanfare(0x13E)
-    fanfare(0x13E)
     if k == 2:
         return 2
     else:
@@ -25,7 +17,6 @@ if given:
     exit
 
 moves = ['left', 'up']
-pan(moves)
 
 question("Hello.\nSorry to trouble you.\nI can't take care\nof my Charmander.\pCan you take care of\nit for me?")
 if LASTRESULT > 0 or LASTRESULT < 5:

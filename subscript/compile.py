@@ -171,11 +171,10 @@ class Compile(object):
         # New -- trying things out
         # Does this work?
 
-
         # Try to handle the node, if possible.
-        if type(node) in self.node_types:
+        try:
             self.node_types[type(node)](node)
-        else:
+        except KeyError:
             raise errors.CompileSyntaxError(node)
 
         # Old Stuff VV
@@ -480,6 +479,7 @@ class Compile(object):
 
     # Expressions
     def _handle_expr(self, node):
+
         if type(node.value) == ast.Attribute:
             self._handle_attribute(node.value)
         elif type(node.value) == ast.Call:
@@ -517,7 +517,7 @@ class Compile(object):
             kwargs[key] = value
 
         if call not in registry:
-            raise errors.CompileNameError(node)
+            raise errors.CompileNameError(node, node.func.id)
 
         cmd = registry[call](*args, **kwargs)
         self.section.append(cmd)

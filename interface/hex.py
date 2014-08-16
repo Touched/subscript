@@ -39,7 +39,7 @@ class Hex(Gtk.HBox):
         # self.canvas.set_size_request(-1, 100);
 
         self.cell_size = 0
-        self.cells_per_row = 0
+        self.cells_per_row = 14
         self.offset_size = 0
         self.text_size = 0
         self.row = 0
@@ -118,7 +118,7 @@ class Hex(Gtk.HBox):
         cr.set_source_rgb(1, 1, 1)
         cr.paint()
 
-        width = widget.get_allocated_width()
+        width = 300
         height = self.get_allocated_height()
 
         top = self.top
@@ -129,15 +129,13 @@ class Hex(Gtk.HBox):
 
         # Calculate the width of the text table
         char_width = int(cr.text_extents('.')[2]) + padding * 2
-        bytes_per_row = (width - offsets_width - bytes_width) // (bytes_width + char_width)
-        text_width = char_width * bytes_per_row + padding * 2
+        text_width = char_width * self.cells_per_row  + padding * 2
         hex_end = width - text_width
 
         self.offset_size = offsets_width
         self.text_size = hex_end - (hex_end % bytes_width) - padding
 
         self.cell_size = bytes_width
-        self.cells_per_row = bytes_per_row
 
         # Grid lines
         if self.props.gridlines:
@@ -204,7 +202,7 @@ class Hex(Gtk.HBox):
                     cr.show_text('{:02X}'.format(byte))
 
                     # Draw the text byte
-                    pos = n % bytes_per_row * char_width + padding + hex_end
+                    pos = n % self.cells_per_row * char_width + padding + hex_end
                     cr.move_to(pos, bytes_width - font_size / 2 + y + top)
 
                     if 0x1F < byte < 0x7F:

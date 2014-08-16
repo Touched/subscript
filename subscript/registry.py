@@ -42,4 +42,5 @@ def function_name():
     '''
     Gets the name of the decorated function that this was called from.
     '''
+
     return inspect.stack()[1][3]

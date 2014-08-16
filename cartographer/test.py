@@ -131,6 +131,7 @@ def load_map(rom, map_offset, sprites_offset):
     types = [Person, Warp, Trigger, Sign]
 
     for ptr, count, cls in zip(data, counts, types):
+        print(hex(ptr), count, cls)
         rom.seek(ptr)
         for item in range(count):
             element = cls.create(rom)
