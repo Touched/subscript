@@ -1,7 +1,7 @@
 import interface.tabs
 import interface.xse
 import subscript.compile
-from gi.repository import Gtk, Gio, GObject, Gdk, GtkSource, Pango, GtkSpell, Clutter, GLib
+from gi.repository import Gtk, Gio, GObject, Gdk, GtkSource, Pango, GtkSpell, GLib
 
 class MyWindow(Gtk.Window):
 
@@ -61,7 +61,7 @@ class MyWindow(Gtk.Window):
         start = 0x800000
 
         text = page.buffer.props.text
-        script = subscript.compile.Compile(text, 0xDEADBEEF)
+        script = subscript.compile.Compile(text, 0xDEADBEEF, self.rom)
         size = len(script.bytecode())
 
         with open(self.rom, 'rb') as rom:
