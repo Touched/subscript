@@ -231,26 +231,33 @@ class TableLookup():
             raise TypeError(value)
 
 class Table(Type):
-    table = None
-
     def __init__(self, script, value):
         super().__init__(script, value)
 
         if type(value) == ast.Str:
-            self._value = self.__class__.table[value.s]
+            self._value = self.table[value.s]
 
     @property
     def value(self):
         return self._value
 
 class Pokemon(Table):
-    table = TableLookup('test.gba', 0x245EE0, 0xB, 412)
+
+    def __init__(self, script, value):
+        self.table = TableLookup('test.gba', 0x245EE0, 0xB, 412)
+        super().__init__(script, value)
 
 class Item(Table):
-    table = TableLookup('test.gba', 0x3DB028, 0x2C, 375)
+
+    def __init__(self, script, value):
+        self.table = TableLookup('test.gba', 0x3DB028, 0x2C, 375)
+        super().__init__(script, value)
 
 class Attack(Table):
-    table = TableLookup('test.gba', 0x247094, 0xD, 355)
+
+    def __init__(self, script, value):
+        self.table = TableLookup('test.gba', 0x247094, 0xD, 355)
+        super().__init__(script, value)
 
 class File(SectionType):
     '''
