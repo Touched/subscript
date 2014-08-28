@@ -92,7 +92,7 @@ functions = registry.Registry('main')
 # ----------------------------------------------
 
 @functions.register
-def lock(lockall=False):
+def lock(script, lockall=False):
     '''
     If `lockall` is ``False``, and the script was called by a Person event, then
     that Person's movement will cease. Otherwise, the function locks all
@@ -106,7 +106,7 @@ def lock(lockall=False):
         return ('lock',)
 
 @functions.register
-def message(string, keepopen=False):
+def message(script, string, keepopen=False):
     '''
     Displays message with text `string` in a message box. If `keepopen` is ``True``,
     the box will not close until :func:`closeonkeypress` is called.
@@ -123,7 +123,7 @@ def message(string, keepopen=False):
     return out
 
 @functions.register
-def msgbox(string, keepopen=False):
+def msgbox(script, string, keepopen=False):
     '''
     Alias for :func:`message`
     '''
@@ -131,7 +131,7 @@ def msgbox(string, keepopen=False):
     return message.inner(string, keepopen)
 
 @functions.register
-def question(string):
+def question(script, string):
     '''
     Displays `string` in a message box, and then displays a Yes/No selection box.
     If the player cancels or selects No, ``LASTRESULT`` is set to ``0``. Otherwise
@@ -145,7 +145,7 @@ def question(string):
     return out
 
 @functions.register
-def givepokemon(species, level=5, item=0):
+def givepokemon(script, species, level=5, item=0):
     '''
     Add the Pokemon given by `species` to the player's party. If it is full,
     it is sent to the PC.
@@ -157,7 +157,7 @@ def givepokemon(species, level=5, item=0):
     return ('givepokemon', species, level, item, 0, 0, 0)
 
 @functions.register
-def fanfare(sound):
+def fanfare(script, sound):
     '''
     Plays the specified fanfare. Non-blocking.
 
@@ -166,21 +166,21 @@ def fanfare(sound):
     return ('fanfare', sound)
 
 @functions.register
-def waitfanfare():
+def waitfanfare(script):
     '''
     Blocks until function :func:`fanfare` has finished.
     '''
     return ('waitfanfare',)
 
 @functions.register
-def closeonkeypress():
+def closeonkeypress(script):
     '''
     Closes a message that had the `keepopen` parameter set to ``True``.
     '''
     return ('closeonkeypress',)
 
 @functions.register
-def call(pointer):
+def call(script, pointer):
     '''
     Jumps to destination and continues script execution from there.
     The location of the calling script is remembered and can be returned to later.
@@ -193,7 +193,7 @@ def call(pointer):
     return ('call', pointer)
 
 @functions.register
-def callstd(func):
+def callstd(script, func):
     '''
     Calls a standard script function.
 
@@ -202,7 +202,7 @@ def callstd(func):
     return ('callstd', func)
 
 @functions.register
-def goto(destination):
+def goto(script, destination):
     '''
     Jumps to `destination` and continues script execution from there.
 
@@ -211,7 +211,7 @@ def goto(destination):
     return ('goto', destination)
 
 @functions.register
-def gotostd(func):
+def gotostd(script, func):
     '''
     Jumps to the standard script function and continues execution from there.
 
@@ -220,7 +220,7 @@ def gotostd(func):
     return ('gotostd', func)
 
 @functions.register
-def pause(time):
+def pause(script, time):
     '''
     Blocks script execution for ``time``.
 
@@ -229,7 +229,7 @@ def pause(time):
     return ('pause', time)
 
 @functions.register
-def release(doall=False):
+def release(script, doall=False):
     '''
     Reverses the effects of :func:`lock`.
 
@@ -241,7 +241,7 @@ def release(doall=False):
         return ('release',)
 
 @functions.register
-def additem(item, quantity=1):
+def additem(script, item, quantity=1):
     '''
     Silently add an item to the player's bag.
 
@@ -251,7 +251,7 @@ def additem(item, quantity=1):
     return ('additem', item, quantity)
 
 @functions.register
-def giveitem(item, quantity=1, fanfare=0):
+def giveitem(script, item, quantity=1, fanfare=0):
     '''
     Gives the player an item, adding to to their bag while displaying a message
     and playing an optional sound.
@@ -271,7 +271,7 @@ def giveitem(item, quantity=1, fanfare=0):
     return out
 
 @functions.register
-def givedecoration(decoration):
+def givedecoration(script, decoration):
     '''
     :command:`nop` in FireRed
     '''
@@ -281,7 +281,7 @@ def givedecoration(decoration):
     return out
 
 @functions.register
-def finditem(item, quantity=1):
+def finditem(script, item, quantity=1):
     '''
     Gives the player an item, adding to to their bag while displaying a message
     saying that they found the item.
@@ -297,7 +297,7 @@ def finditem(item, quantity=1):
     return out
 
 @functions.register
-def wildbattle(species, level=70, item=0):
+def wildbattle(script, species, level=70, item=0):
     '''
     Triggers a prefined wild Pokemon battle. Blocks until the battle finishes.
 
@@ -309,21 +309,21 @@ def wildbattle(species, level=70, item=0):
     return [('setwildbattle', species, level, item), ('dowildbattle',)]
 
 @functions.register
-def jumpram():
+def jumpram(script):
     '''
     Executes a script stored in a default RAM location.
     '''
     return ('jumpram',)
 
 @functions.register
-def killscript():
+def killscript(script):
     '''
     Executes a script stored in a default RAM location.
     '''
     return ('killscript',)
 
 @functions.register
-def setbyte(byte):
+def setbyte(script, byte):
     '''
     Pads the specified value to a dword, and then writes that dword to a
     predefined address (0x0203AAA8).
@@ -333,7 +333,7 @@ def setbyte(byte):
     return ('setbyte', byte)
 
 @functions.register
-def arm(pointer):
+def arm(script, pointer):
     '''
     Calls the ARM assembly routine stored at offset.
 
@@ -345,7 +345,7 @@ def arm(pointer):
     return ('callasm', routine)
 
 @functions.register
-def thumb(pointer):
+def thumb(script, pointer):
     '''
     Calls the Thumb assembly routine stored at offset.
 
@@ -357,7 +357,7 @@ def thumb(pointer):
     return ('callasm', routine)
 
 @functions.register
-def asm(pointer):
+def asm(script, pointer):
     '''
     Calls the assembly routine at the pointer, without setting the mode.
 
@@ -366,7 +366,7 @@ def asm(pointer):
     return ('callasm', pointer)
 
 @functions.register
-def loadthumb(pointer):
+def loadthumb(script, pointer):
     '''
     Loads a Thumb routine into the script RAM.
 
@@ -375,7 +375,7 @@ def loadthumb(pointer):
     return ('cmd24', pointer)
 
 @functions.register
-def sound(number):
+def sound(script, number):
     '''
     Plays the specified (sound_number) sound. Only one sound may play at a time, with newer ones interrupting older ones.
 
@@ -388,7 +388,7 @@ def sound(number):
     return ('sound', number)
 
 @functions.register
-def waitsound(number):
+def waitsound(script, number):
     '''
     Blocks script execution until the currently-playing sound (triggered by sound) finishes playing.
     '''
@@ -396,7 +396,7 @@ def waitsound(number):
     return ('checksound',)
 
 @functions.register
-def warp(bank=127, number=127, byte=127, x=0, y=0, style='normal'):
+def warp(script, bank=127, number=127, byte=127, x=0, y=0, style='normal'):
     '''
     Sends the player to Warp warp on Map bank.map. If the specified warp is 0xFF,
     then the player will instead be sent to (X, Y) on the map.
@@ -430,24 +430,24 @@ def warp(bank=127, number=127, byte=127, x=0, y=0, style='normal'):
         return ('setwarpplace', bank, number)
 
 @functions.register
-def getplayerpos(var_x, var_y):
+def getplayerpos(script, var_x, var_y):
     '''
     Retrieves the player's zero-indexed X- and Y-coordinates in the map, and stores them in the specified variables.
 
     :param var_x: The variable to store the X-coordinate in.
     :param var_y: The variable to store the Y-coordinate in.
     '''
-    return (getplayerpos, var_x, var_y)
+    return (script, getplayerpos, var_x, var_y)
 
 @functions.register
-def countparty():
+def countparty(script):
     '''
     Retrieves the number of Pokémon in the player's party, and stores that number in variable 0x800D (LASTRESULT).
     '''
-    return ('countPokémon',)
+    return ('countpokemon',)
 
 @functions.register
-def removeitem(item, quantity=1):
+def removeitem(script, item, quantity=1):
     '''
     Removes quantity of item index from the player's Bag.
 
@@ -459,7 +459,7 @@ def removeitem(item, quantity=1):
     return ('removeitem', item, quantity)
 
 @functions.register
-def checkitemroom(item, quantity=1):
+def checkitemroom(script, item, quantity=1):
     '''
     Checks if the player has enough space in the Bag to hold `quantity` of `item`.
     If there is room, it sets variable 0x800D (``LASTRESULT``) to 0x0001, otherwise it is set to 0x0000.
@@ -470,7 +470,7 @@ def checkitemroom(item, quantity=1):
     return ('checkitemroom', item, quantity)
 
 @functions.register
-def checkitem(item, quantity=1):
+def checkitem(script, item, quantity=1):
     '''
     Checks if the player has `quantity` or more of `item` in the Bag.
     Sets variable 0x800D (``LASTRESULT``) to 0x0001 if the player has enough of `item`, or 0x0000 if they have fewer than `quantity` of `item`.
@@ -484,7 +484,7 @@ def checkitem(item, quantity=1):
 # Skipped 0x49 & 0x4A -- missing from DavidJCobb's database
 
 @functions.register
-def adddecoration(decoration):
+def adddecoration(script, decoration):
     '''
     In FR/LG, this command is a ``nop``. (The argument is read, but not used for anything.)
 
@@ -493,7 +493,7 @@ def adddecoration(decoration):
     return ('addecoration', decoration)
 
 @functions.register
-def removedecoration(decoration):
+def removedecoration(script, decoration):
     '''
     In FR/LG, this command is a ``nop``. (The argument is read, but not used for anything.)
 
@@ -502,7 +502,7 @@ def removedecoration(decoration):
     return ('removedecoration', decoration)
 
 @functions.register
-def checkdecorationroom(decoration):
+def checkdecorationroom(script, decoration):
     '''
     In FR/LG, this command is a ``nop``. (The argument is read, but not used for anything.)
 
@@ -512,7 +512,7 @@ def checkdecorationroom(decoration):
     return ('testdecoration', decoration)
 
 @functions.register
-def checkdecoration(decoration):
+def checkdecoration(script, decoration):
     '''
     In FR/LG, this command is a ``nop``. (The argument is read, but not used for anything.)
 
@@ -521,7 +521,7 @@ def checkdecoration(decoration):
     return ('checkdecoration', decoration)
 
 @functions.register
-def applymovement(movements, overworld=0xFF):
+def applymovement(script, movements, overworld=0xFF):
     '''
     Moves the overworld with Person ID `overworld` with the movement set
     `movements`. The function moves the player by default.
@@ -533,7 +533,7 @@ def applymovement(movements, overworld=0xFF):
 
 # 0x50 - applymovementpos is somewhat broken
 @functions.register
-def applymovementplayer(movements):
+def applymovementplayer(script, movements):
     '''
     Moves the player overworld with the movement set `movements`.
 
@@ -544,7 +544,7 @@ def applymovementplayer(movements):
     return ('applymovementpos', 0xFF, movements, 0x0, 0x0)
 
 @functions.register
-def waitmovement(overworld=0x0):
+def waitmovement(script, overworld=0x0):
     '''
     Blocks script execution until the movements being applied to the Person ID
     `overworld` finish.
@@ -556,7 +556,7 @@ def waitmovement(overworld=0x0):
     return ('waitmovement', overworld)
 
 @functions.register
-def waitmovementplayer():
+def waitmovementplayer(script):
     '''
     A clone of :func:`waitmovement` that only works with the player overworld.
     '''
@@ -565,7 +565,7 @@ def waitmovementplayer():
     return ('waitmovementpos', 0xFF, 0x0, 0x0)
 
 @functions.register
-def disappear(sprite):
+def disappear(script, sprite):
     '''
     Hides the overworld with ID ``sprite``
 
@@ -575,7 +575,7 @@ def disappear(sprite):
     return ('hidesprite', sprite)
 
 @functions.register
-def hide(sprite):
+def hide(script, sprite):
     '''
     An alias for :func:`disappear`.
     '''
@@ -585,7 +585,7 @@ def hide(sprite):
 # Commands 0x55 - 0x59 are missing
 
 @functions.register
-def faceplayer():
+def faceplayer(script):
     '''
     If the script was called by a Person event, then that Person will turn to
     face the tile that the player is stepping off of.
@@ -596,7 +596,7 @@ def faceplayer():
 
 # TODO: 0x5C trainerbattle
 @functions.register
-def repeattrainerbattle():
+def repeattrainerbattle(script):
     '''
     Starts a trainer battle using the battle information stored in RAM (usually
     by trainerbattle, which actually calls this command behind-the-scenes), and
@@ -607,7 +607,7 @@ def repeattrainerbattle():
 # Missing 0x5E - 0x65
 
 @functions.register
-def waitmsg():
+def waitmsg(script):
     '''
     If a standard message box (or its text) is being drawn on-screen, this
     command blocks script execution until the box and its text have been fully
@@ -616,7 +616,7 @@ def waitmsg():
     return ('waitmsg',)
 
 @functions.register
-def preparemsg(message):
+def preparemsg(script, message):
     '''
     Starts displaying a standard message box containing the specified text. If
     text is a pointer, then the string at that offset will be loaded and used.
@@ -629,14 +629,14 @@ def preparemsg(message):
     return ('preparemsg', message.value)
 
 @functions.register
-def waitkeypress():
+def waitkeypress(script):
     '''
     Blocks script execution until the player presses any key.
     '''
     return ('waitkeypress',)
 
 @functions.register
-def yesnobox(x, y):
+def yesnobox(script, x, y):
     '''
     Displays a YES/NO multichoice box at the specified coordinates, and blocks
     script execution until the user makes a selection. Their selection is stored
@@ -649,7 +649,7 @@ def yesnobox(x, y):
     return ('yesnobox',)
 
 @functions.register
-def multichoice(x, y, choices, cancel=1, default=None, per_row=-1):
+def multichoice(script, x, y, choices, cancel=1, default=None, per_row=-1):
     '''
     Displays a multichoice box from which the user can choose a selection, and
     blocks script execution until a selection is made. Lists of options are
@@ -677,7 +677,7 @@ def multichoice(x, y, choices, cancel=1, default=None, per_row=-1):
 # Missing 0x71 - 0x74
 
 @functions.register
-def showpokepic(species, x, y):
+def showpokepic(script, species, x, y):
     '''
     Displays a box containing the front sprite for the specified (species)
     Pokémon species.
@@ -689,7 +689,8 @@ def showpokepic(species, x, y):
 
     return ('showpokepic', species, x, y)
 
-def hidepokepic():
+@functions.register
+def hidepokepic(script):
     '''
     Hides all boxes displayed with showpokepic.
     '''
@@ -701,7 +702,8 @@ def hidepokepic():
 # convert to the proper commands
 
 # The buffer pokemon commands have the é symbol in them. Fix this up
-def bufferpoke(buffer, species):
+@functions.register
+def bufferpoke(script, buffer, species):
     '''
     Writes the name of the Pokémon at index species to the specified buffer.
 
@@ -710,7 +712,8 @@ def bufferpoke(buffer, species):
     '''
     return ('bufferPokémon', buffer, species)
 
-def bufferfirstpoke(buffer):
+@functions.register
+def bufferfirstpoke(script, buffer):
     '''
     Writes the name of the first Pokémon in the player's party to the specified buffer.
 
