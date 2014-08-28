@@ -5,6 +5,7 @@ import subscript.codec
 import ast
 from subscript import errors
 import json
+import textwrap
 
 class TypeRegistry(type):
     '''
@@ -109,14 +110,24 @@ class String(SectionType):
     '''
 
     def section(self):
+        # Wrap text to GBA line width
+        # Respect new lines that were manually typed in by looping over each line
+        # separately.
+
+        tokens = []
+        for line in self._value.split('\n'):
+            tokens.append('\n'.join(textwrap.wrap(line, 32)))
+
+        text = '\n'.join(tokens)
+
         # Print escape sequences (repr), and slice the quotes
-        value = repr(self._value)[1:-1]
+        value = repr(text)[1:-1]
         # Replace double backslashes in the text - for invalid escape sequences
         value = value.replace('\\\\', '\\')
         p = textparse.PoketextParser()
         p.feed(value)
         data = p.output
-        return subscript.script.SectionRaw(self.parent, data, debug=repr(self._value))
+        return subscript.script.SectionRaw(self.parent, data, debug=repr(text))
 
 class Raw(SectionType):
     '''
@@ -214,6 +225,7 @@ class TableLookup():
             ch = subscript.codec.decoding_dict[b]
             if ch:
                 out += ch
+
         return out.lower()
 
     def __getitem__(self, value):
@@ -244,19 +256,19 @@ class Table(Type):
 class Pokemon(Table):
 
     def __init__(self, script, value):
-        self.table = TableLookup('test.gba', 0x245EE0, 0xB, 412)
+        self.table = TableLookup(script.rom, 0x245EE0, 0xB, 412)
         super().__init__(script, value)
 
 class Item(Table):
 
     def __init__(self, script, value):
-        self.table = TableLookup('test.gba', 0x3DB028, 0x2C, 375)
+        self.table = TableLookup(script.rom, 0x3DB028, 0x2C, 375)
         super().__init__(script, value)
 
 class Attack(Table):
 
     def __init__(self, script, value):
-        self.table = TableLookup('test.gba', 0x247094, 0xD, 355)
+        self.table = TableLookup(script.rom, 0x247094, 0xD, 355)
         super().__init__(script, value)
 
 class File(SectionType):
