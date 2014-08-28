@@ -58,8 +58,7 @@ class Script(object):
         Return the scripting language that this ROM uses. Used to allow for syntax
         or semantic differences in each ROM.
         '''
-        pass
-        #return self.config[self.code]['language']
+        return self.config[self._code]['language']
 
 class Section(object):
     '''
