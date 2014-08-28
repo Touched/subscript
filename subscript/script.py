@@ -5,6 +5,7 @@ Basic components for script files.
 import collections
 import subscript.datatypes
 import subscript.config
+import json
 
 class Script(object):
     '''
@@ -60,6 +61,14 @@ class Script(object):
         or semantic differences in each ROM.
         '''
         return self.config[self._code]['language']
+
+    @property
+    def state(self):
+        print('Called getter')
+
+    @state.setter
+    def state(self, value):
+        print('Called setter')
 
 class Section(object):
     '''
@@ -135,6 +144,9 @@ class Command(object):
     '''
 
     # Load command configuration for the whole class
+    with open('tables/commands.json') as file:
+        commands = json.load(file)
+
     def __init__(self, name, args):
         self.name = name
         self.args = args
