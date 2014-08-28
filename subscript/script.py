@@ -4,13 +4,14 @@ Basic components for script files.
 
 import collections
 import subscript.datatypes
+import subscript.config
 
 class Script(object):
     '''
     Represents a script - a collection of sections.
     '''
 
-    def __init__(self, start, path, config=None):
+    def __init__(self, start, path):
         '''
         Constructor.
         '''
@@ -20,7 +21,7 @@ class Script(object):
         Section.counter = 0
         SectionRaw.counter = 0
 
-        #config = config if config else 'config.json'
+        self.config = subscript.config.RomConfig()
 
         with open(self.rom, 'rb') as file:
             file.seek(0xAC)
