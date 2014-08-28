@@ -1,4 +1,4 @@
-import subscript.script as script
+from subscript.script import Command
 import functools
 import inspect
 
@@ -13,21 +13,20 @@ class Registry(object):
 
     def register(self, f):
         @functools.wraps(f)
-        def function(*args, **kwargs):
-            ret = f(*args, **kwargs)
+        def function(script, *args, **kwargs):
+            ret = f(script, *args, **kwargs)
 
             if type(ret) == bytes:
                 return ret
             elif type(ret) == tuple:
-                return script.Command.create(*ret)
+                return Command.create(*ret)
             elif type(ret) == list:
                 out = []
                 for item in ret:
-                    out.append(script.Command.create(*item))
+                    out.append(Command.create(*item))
                 return out
 
         function.inner = f
-        function.state = {}
 
         self.registry[f.__name__] = function
         return function
@@ -37,10 +36,3 @@ class Registry(object):
 
     def __getitem__(self, index):
         return self.registry[index]
-
-def function_name():
-    '''
-    Gets the name of the decorated function that this was called from.
-    '''
-
-    return inspect.stack()[1][3]
