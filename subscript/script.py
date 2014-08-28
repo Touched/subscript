@@ -6,6 +6,7 @@ import collections
 import subscript.datatypes
 import subscript.config
 import json
+import inspect
 
 class Script(object):
     '''
@@ -14,13 +15,16 @@ class Script(object):
 
     def __init__(self, start, path):
         '''
-        Constructor.
+        Create a new script.
         '''
         self.rom = path
         self.sections = []
         self.base = start
         Section.counter = 0
         SectionRaw.counter = 0
+
+        # State variables. Functions can store data here
+        self._state = {}
 
         self.config = subscript.config.RomConfig()
 
@@ -64,11 +68,27 @@ class Script(object):
 
     @property
     def state(self):
-        print('Called getter')
+        '''
+        Private state variable for functions. Only the named function can set
+        and read it.
+        '''
+
+        # Get the calling function's name
+        name = inspect.stack()[1][3]
+
+        try:
+            return self._state[name]
+        except KeyError:
+            return None
 
     @state.setter
     def state(self, value):
-        print('Called setter')
+        '''
+        Setter for the state property.
+        '''
+
+        name = inspect.stack()[1][3]
+        self._state[name] = value
 
 class Section(object):
     '''
