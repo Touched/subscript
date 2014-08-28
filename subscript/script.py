@@ -1,8 +1,7 @@
 '''
-Classes
+Basic components for script files.
 '''
 
-import json
 import collections
 import subscript.datatypes
 
@@ -11,14 +10,23 @@ class Script(object):
     Represents a script - a collection of sections.
     '''
 
-    def __init__(self, start):
+    def __init__(self, start, path, config=None):
         '''
         Constructor.
         '''
+        self.rom = path
         self.sections = []
         self.base = start
         Section.counter = 0
         SectionRaw.counter = 0
+
+        #config = config if config else 'config.json'
+
+        with open(self.rom, 'rb') as file:
+            file.seek(0xAC)
+
+            # Code is in ASCII, but UTF-8 is ASCII compatible
+            self._code = file.read(4).decode()
 
     def add(self, value=None):
         '''
@@ -35,6 +43,23 @@ class Script(object):
     def compile(self):
         for section in self.sections:
             print(section)
+
+    @property
+    def code(self):
+        '''
+        Return the 4 character game code for the GBA ROM that this script is
+        attached to.
+        '''
+        return self._code
+
+    @property
+    def language(self):
+        '''
+        Return the scripting language that this ROM uses. Used to allow for syntax
+        or semantic differences in each ROM.
+        '''
+        pass
+        #return self.config[self.code]['language']
 
 class Section(object):
     '''
@@ -110,9 +135,6 @@ class Command(object):
     '''
 
     # Load command configuration for the whole class
-    with open('tables/commands.json') as file:
-        commands = json.load(file)
-
     def __init__(self, name, args):
         self.name = name
         self.args = args

@@ -1,0 +1,117 @@
+{
+    "AXVE": {
+        "title": "Pokémon Ruby",
+        "locale": "en_US",
+        "inherits": null,
+        "language": "ruby",
+        "names": {
+            "pokemon": {
+                "start": "0x1F716C",
+                "length": 11,
+                "number": 412
+            },
+            "items": {
+                "start": "0x3C5564",
+                "length": 44,
+                "number": 349
+            },
+            "attacks": {
+                "start": "0x1F8320",
+                "length": 13,
+                "number": 349
+            }
+        }
+    },
+    "AXPE": {
+        "title": "Pokémon Sapphire",
+        "locale": "en_US",
+        "inherits": null,
+        "language": "ruby",
+        "tables": {
+            "pokemon": {
+                "start": "0x1F70FC",
+                "length": 11,
+                "number": 412
+            },
+            "items": {
+                "start": "0x3C55BC",
+                "length": 44,
+                "number": 349
+            },
+            "attacks": {
+                "start": "0x1F82B0",
+                "length": 13,
+                "number": 349
+            }
+        }
+    },
+    "BPRE": {
+        "title": "Pokémon FireRed",
+        "locale": "en_US",
+        "inherits": null,
+        "language": "red",
+        "tables": {
+            "pokemon": {
+                "start": "0x245EE0",
+                "length": 11,
+                "number": 412
+            },
+            "items": {
+                "start": "0x3DB028",
+                "length": 44,
+                "number": 375
+            },
+            "attacks": {
+                "start": "0x247094",
+                "length": 13,
+                "number": 355
+            }
+        }
+    },
+    "BPGE": {
+        "title": "Pokémon LeafGreen",
+        "locale": "en_US",
+        "inherits": null,
+        "language": "red",
+        "tables": {
+            "pokemon": {
+                "start": "0x245EBC",
+                "length": 11,
+                "number": 412
+            },
+            "items": {
+                "start": "0x3DAE64",
+                "length": 44,
+                "number": 375
+            },
+            "attacks": {
+                "start": "0x247070",
+                "length": 13,
+                "number": 355
+            }
+        }
+    },
+    "BPEE": {
+        "title": "Pokémon Emerald",
+        "locale": "en_US",
+        "inherits": null,
+        "language": "ruby",
+        "tables": {
+            "pokemon": {
+                "start": "0x3185C8",
+                "length": 11,
+                "number": 412
+            },
+            "items": {
+                "start": "0x5839A0",
+                "length": 44,
+                "number": 377
+            },
+            "attacks": {
+                "start": "0x31977C",
+                "length": 13,
+                "number": 355
+            }
+        }
+    }
+}
