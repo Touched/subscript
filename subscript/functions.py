@@ -722,6 +722,14 @@ def bufferfirstpoke(script, buffer):
 
     return ('bufferfirstPokémon', buffer)
 
+@functions.register
+def dummy(script):
+    '''
+    Test function
+    '''
+    print(script.state)
+    return ('nop',)
+
 # Finished up to command number 0x7E
 # Resume from http://www.sphericalice.co/romhacking/davidjcobb_script/#c-7F
 
