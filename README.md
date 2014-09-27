@@ -1,6 +1,6 @@
 ## Subscript
 
-Subscript is a limited subset of Python, written using Python's own AST, designed to make scripting intuitive and fun.
+Subscript is a limited subset of Python, written using Python's own AST, designed to make scripting for GBA Pokemon games intuitive and fun.
 
 ## Installation
 
