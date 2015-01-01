@@ -12,7 +12,7 @@ class RomConfig(object):
         '''
         Constructor
         '''
-        with open('../config/roms.json') as file:
+        with open('config/roms.json') as file:
             self.config = json.load(file)
 
         self.cache = {}
@@ -36,7 +36,7 @@ class RomConfig(object):
                 child = parent
 
             # Cache item for faster lookup next time
-            self.chache[index] = out
+            self.cache[index] = out
             return out
         else:
             # TODO: Raise a "NotSupported" exception
